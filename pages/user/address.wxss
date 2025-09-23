@@ -1,0 +1,158 @@
+/* pages/user/address.wxss */
+.container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f8f8;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  color: #007AFF;
+  font-size: 32rpx;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+.back-icon {
+  margin-right: 10rpx;
+  font-weight: bold;
+}
+
+.back-text {
+  font-size: 28rpx;
+}
+
+.loading {
+  text-align: center;
+  padding: 100rpx;
+  color: #999;
+}
+
+.empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100rpx 30rpx;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 30rpx;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 15rpx;
+}
+
+.empty-desc {
+  font-size: 28rpx;
+  color: #999;
+}
+
+.address-list {
+  flex: 1;
+  padding: 20rpx;
+}
+
+.addresses {
+  margin-bottom: 120rpx;
+}
+
+.address-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.address-card.default {
+  border: 2rpx solid #FF6B35;
+}
+
+.address-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.name {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #333;
+  margin-right: 20rpx;
+}
+
+.phone {
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 20rpx;
+}
+
+.default-tag {
+  background: #FF6B35;
+  color: white;
+  padding: 4rpx 12rpx;
+  border-radius: 4rpx;
+  font-size: 22rpx;
+}
+
+.address-detail {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.4;
+  display: block;
+  margin-bottom: 25rpx;
+}
+
+.address-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 30rpx;
+  border-top: 1rpx solid #f5f5f5;
+  padding-top: 25rpx;
+}
+
+.btn-action {
+  font-size: 26rpx;
+  color: #666;
+  padding: 8rpx 16rpx;
+  border: 1rpx solid #ddd;
+  border-radius: 6rpx;
+}
+
+.btn-action.primary {
+  border-color: #FF6B35;
+  color: #FF6B35;
+}
+
+.add-button {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: white;
+  padding: 20rpx 30rpx;
+  border-top: 1rpx solid #eee;
+}
+
+.btn-add {
+  background: #FF6B35;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  padding: 25rpx;
+  font-size: 32rpx;
+}

@@ -1,0 +1,117 @@
+<!--pages/product/list.wxml-->
+<view class="container">
+  <!-- 返回按钮 -->
+  <view class="back-button" bindtap="onGoBack">
+    <text class="back-icon">←</text>
+    <text class="back-text">返回</text>
+  </view>
+  
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <input 
+      class="search-input" 
+      placeholder="搜索商品" 
+      value="{{filters.keyword}}"
+      bindinput="onSearchInput"
+      bindconfirm="onSearchConfirm"
+    />
+    <text class="icon-search">🔍</text>
+  </view>
+
+  <!-- 排序和筛选栏 -->
+  <view class="filter-bar">
+    <view class="filter-options">
+      <view 
+        class="filter-item {{showFilter ? 'active' : ''}}"
+        bindtap="onToggleFilter"
+      >
+        <text>筛选</text>
+        <text class="icon-filter">⚙️</text>
+      </view>
+      
+      <view class="sort-options">
+        <view 
+          class="sort-item {{selectedSort.value === item.value && selectedSort.order === item.order ? 'active' : ''}}"
+          wx:for="{{sortOptions}}"
+          wx:key="value"
+          data-sort="{{item}}"
+          bindtap="onSelectSort"
+        >
+          <text>{{item.label}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 筛选面板 -->
+  <view class="filter-panel {{showFilter ? 'show' : ''}}">
+    <view class="filter-content">
+      <view class="filter-section">
+        <text class="section-title">价格范围</text>
+        <view class="price-inputs">
+          <input 
+            class="price-input" 
+            placeholder="最低价" 
+            type="number"
+            value="{{filters.minPrice}}"
+            data-field="minPrice"
+            bindinput="onPriceInput"
+          />
+          <text class="price-separator">-</text>
+          <input 
+            class="price-input" 
+            placeholder="最高价" 
+            type="number"
+            value="{{filters.maxPrice}}"
+            data-field="maxPrice"
+            bindinput="onPriceInput"
+          />
+        </view>
+      </view>
+
+      <view class="filter-actions">
+        <button class="btn-reset" bindtap="onResetFilter">重置</button>
+        <button class="btn-apply" bindtap="onApplyFilter">应用</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <scroll-view class="product-list" scroll-y bindscrolltolower="onReachBottom">
+    <view class="product-grid">
+      <view 
+        class="product-card"
+        wx:for="{{products}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onSelectProduct"
+      >
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          <text class="product-sales">已售{{item.sales || 0}}</text>
+          <text class="product-tag" wx:if="{{item.isNew}}">新品</text>
+          <text class="product-tag discount" wx:if="{{item.discount}}">特价</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="load-more" wx:if="{{loading}}">
+      <text>加载中...</text>
+    </view>
+    <view class="load-more" wx:if="{{!hasMore && !loading}}">
+      <text>没有更多商品了</text>
+    </view>
+  </scroll-view>
+
+  <!-- 遮罩层 -->
+  <view 
+    class="mask {{showFilter ? 'show' : ''}}" 
+    bindtap="onToggleFilter"
+  ></view>
+</view>

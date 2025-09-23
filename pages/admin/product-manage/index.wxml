@@ -1,0 +1,107 @@
+<!--pages/admin/product-manage/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="back-button" bindtap="onBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">商品管理</text>
+    <button class="add-btn" bindtap="onAddNewProduct">添加商品</button>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="filters">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="搜索商品名称" 
+        value="{{searchKeyword}}" 
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <text class="search-icon" bindtap="onSearchConfirm">🔍</text>
+    </view>
+
+    <view class="filter-row">
+      <picker class="filter-select" value="{{statusFilter}}" bindchange="onStatusChange">
+        <view class="filter-label">
+          <text>{{statusFilter === 'all' ? '全部状态' : statusFilter === 'published' ? '已上架' : '已下架'}}</text>
+          <text class="filter-arrow">▼</text>
+        </view>
+      </picker>
+
+      <picker class="filter-select" value="{{selectedCategory}}" bindchange="onCategoryChange">
+        <view class="filter-label">
+          <text>{{selectedCategory ? selectedCategory : '全部分类'}}</text>
+          <text class="filter-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="product-list">
+    <block wx:for="{{products}}" wx:key="id">
+      <view class="product-card">
+        <image class="product-image" src="{{item.mainImage || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjVmNWY1Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIyNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZG9taW5hbnQtYmFzZWxpbmU9Im1pZGRsZSI+55Sf5rS75Zu+5YOPPC90ZXh0Pjwvc3ZnPg=='}}" />
+        
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-price">¥{{item.price}}</text>
+          <text class="product-stock">库存: {{item.stock}}</text>
+          <text class="product-status {{item.status}}">
+            {{item.status === 'published' ? '已上架' : '已下架'}}
+          </text>
+        </view>
+
+        <view class="product-actions">
+          <button class="btn-edit" bindtap="onEditProduct" data-id="{{item.id}}">编辑</button>
+          <button 
+            class="btn-status {{item.status === 'published' ? 'btn-unpublish' : 'btn-publish'}}" 
+            bindtap="onToggleProductStatus" 
+            data-id="{{item.id}}"
+          >
+            {{item.status === 'published' ? '下架' : '上架'}}
+          </button>
+          <button class="btn-delete" bindtap="onDeleteProduct" data-id="{{item.id}}">删除</button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:if="{{products.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📦</text>
+      <text class="empty-text">暂无商品</text>
+      <button class="empty-btn" bindtap="onAddNewProduct">添加第一个商品</button>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 分页 -->
+  <view wx:if="{{totalPages > 1}}" class="pagination">
+    <button 
+      class="page-btn {{currentPage === 1 ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage - 1}}"
+      disabled="{{currentPage === 1}}"
+    >
+      上一页
+    </button>
+    
+    <text class="page-info">第 {{currentPage}} 页 / 共 {{totalPages}} 页</text>
+    
+    <button 
+      class="page-btn {{currentPage === totalPages ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage + 1}}"
+      disabled="{{currentPage === totalPages}}"
+    >
+      下一页
+    </button>
+  </view>
+</view>

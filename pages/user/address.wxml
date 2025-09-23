@@ -1,0 +1,71 @@
+<!--pages/user/address.wxml-->
+<view class="container">
+  <!-- 返回按钮 -->
+  <view class="back-button" bindtap="onGoBack">
+    <text class="back-icon">←</text>
+    <text class="back-text">返回</text>
+  </view>
+  
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty" wx:if="{{!loading && addresses.length === 0}}">
+    <text class="empty-icon">📍</text>
+    <text class="empty-text">暂无收货地址</text>
+    <text class="empty-desc">添加收货地址以便快速下单</text>
+  </view>
+
+  <!-- 地址列表 -->
+  <scroll-view class="address-list" scroll-y wx:else>
+    <view class="addresses">
+      <view 
+        class="address-card {{item.isDefault ? 'default' : ''}}"
+        wx:for="{{addresses}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="{{selectMode ? 'onSelectAddress' : ''}}"
+      >
+        <view class="address-header">
+          <text class="name">{{item.name}}</text>
+          <text class="phone">{{item.phone}}</text>
+          <text class="default-tag" wx:if="{{item.isDefault}}">默认</text>
+        </view>
+        <text class="address-detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</text>
+        
+        <!-- 操作按钮 -->
+        <view class="address-actions" wx:if="{{!selectMode}}">
+          <text 
+            class="btn-action" 
+            data-id="{{item.id}}"
+            bindtap="onEditAddress"
+          >
+            编辑
+          </text>
+          <text 
+            class="btn-action" 
+            data-id="{{item.id}}"
+            bindtap="onDeleteAddress"
+          >
+            删除
+          </text>
+          <text 
+            class="btn-action primary" 
+            wx:if="{{!item.isDefault}}"
+            data-id="{{item.id}}"
+            bindtap="onSetDefaultAddress"
+          >
+            设为默认
+          </text>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 添加按钮 -->
+  <view class="add-button" wx:if="{{!selectMode}}">
+    <button class="btn-add" bindtap="onAddAddress">添加新地址</button>
+  </view>
+</view>

@@ -1,0 +1,105 @@
+<!--pages/admin/index.wxml-->
+<view class="container">
+  <!-- 返回按钮 -->
+  <view class="back-button" bindtap="onBackToUserCenter">
+    <text class="back-icon">←</text>
+    <text class="back-text">返回</text>
+  </view>
+  
+  <!-- 管理后台头部 -->
+  <view class="admin-header">
+    <view class="header-title">
+      <text class="title">管理后台</text>
+      <text class="subtitle">商城管理系统</text>
+    </view>
+    <view class="header-user">
+      <image class="user-avatar" src="{{userInfo.avatarUrl}}" />
+      <text class="user-name">{{userInfo.nickName}}</text>
+    </view>
+  </view>
+
+  <!-- 数据概览 -->
+  <view class="stats-section">
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-number">{{stats.products}}</text>
+        <text class="stat-label">商品总数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-number">{{stats.orders}}</text>
+        <text class="stat-label">订单总数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-number">{{stats.users}}</text>
+        <text class="stat-label">用户总数</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-number">¥{{stats.revenue}}</text>
+        <text class="stat-label">总销售额</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 功能卡片网格 - 紧凑布局 -->
+  <view class="compact-grid">
+    <!-- 第一行：商品和订单管理 -->
+    <view class="compact-row">
+      <view class="compact-card" bindtap="onNavigateToProductManage">
+        <view class="compact-icon">📦</view>
+        <text class="compact-title">商品管理</text>
+        <text class="compact-stats">{{stats.products}} 商品</text>
+      </view>
+      
+      <view class="compact-card" bindtap="onNavigateToOrderManage">
+        <view class="compact-icon">📋</view>
+        <text class="compact-title">订单管理</text>
+        <text class="compact-stats">{{stats.orders}} 订单</text>
+      </view>
+    </view>
+
+    <!-- 第二行：用户和首页配置 -->
+    <view class="compact-row">
+      <view class="compact-card" bindtap="onNavigateToUserManage">
+        <view class="compact-icon">👥</view>
+        <text class="compact-title">用户管理</text>
+        <text class="compact-stats">{{stats.users}} 用户</text>
+      </view>
+      
+      <view class="compact-card" bindtap="onNavigateToSectionManage">
+        <view class="compact-icon">🏠</view>
+        <text class="compact-title">首页配置</text>
+        <text class="compact-stats">6 板块</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷操作工具栏 -->
+  <view class="quick-toolbar">
+    <view class="toolbar-title">快捷操作</view>
+    <view class="toolbar-buttons">
+      <button class="tool-btn primary" bindtap="onAddNewProduct">
+        <text class="tool-icon">➕</text>
+        <text class="tool-text">添加商品</text>
+      </button>
+      <button class="tool-btn" bindtap="onViewTodayOrders">
+        <text class="tool-icon">📅</text>
+        <text class="tool-text">今日订单</text>
+      </button>
+      <button class="tool-btn" bindtap="onCheckInventory">
+        <text class="tool-icon">📊</text>
+        <text class="tool-text">库存检查</text>
+      </button>
+      <button class="tool-btn backend" bindtap="onSwitchBackend">
+        <text class="tool-icon">🔄</text>
+        <text class="tool-text">切换后端</text>
+        <text class="backend-badge">{{backendType === 'tencent' ? '腾讯云' : 'Supabase'}}</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 底部导航 -->
+  <view class="bottom-nav">
+    <button class="btn-back" bindtap="onBackToUserCenter">返回用户中心</button>
+    <button class="btn-switch" bindtap="onSwitchToConsumer">切换到消费者页面</button>
+  </view>
+</view>

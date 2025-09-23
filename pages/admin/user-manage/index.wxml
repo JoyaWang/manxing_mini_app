@@ -1,0 +1,97 @@
+<!--pages/admin/user-manage/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="back-button" bindtap="onBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">用户管理</text>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="filters">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="搜索用户名/手机号" 
+        value="{{searchKeyword}}" 
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <text class="search-icon" bindtap="onSearchConfirm">🔍</text>
+    </view>
+
+    <view class="filter-row">
+      <picker class="filter-select" value="{{roleFilter}}" bindchange="onRoleChange">
+        <view class="filter-label">
+          <text>{{roleFilter === 'all' ? '全部角色' : roleFilter === 'admin' ? '管理员' : '普通用户'}}</text>
+          <text class="filter-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 用户列表 -->
+  <view class="user-list">
+    <block wx:for="{{users}}" wx:key="id">
+      <view class="user-card">
+        <image class="user-avatar" src="{{item.avatarUrl || '/images/default-avatar.png'}}" />
+        
+        <view class="user-info">
+          <text class="user-name">{{item.nickName}}</text>
+          <text class="user-mobile">{{item.mobile || '未绑定手机'}}</text>
+          <text class="user-role {{item.role}}">
+            {{item.role === 'admin' ? '管理员' : '普通用户'}}
+          </text>
+          <text class="user-time">注册时间: {{item.createTime}}</text>
+        </view>
+
+        <view class="user-actions">
+          <button 
+            class="btn-role {{item.role === 'admin' ? 'btn-demote' : 'btn-promote'}}" 
+            bindtap="onToggleUserRole" 
+            data-id="{{item.id}}"
+          >
+            {{item.role === 'admin' ? '取消管理员' : '设为管理员'}}
+          </button>
+          <button class="btn-reset" bindtap="onResetPassword" data-id="{{item.id}}">重置密码</button>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:if="{{users.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">👥</text>
+      <text class="empty-text">暂无用户</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 分页 -->
+  <view wx:if="{{totalPages > 1}}" class="pagination">
+    <button 
+      class="page-btn {{currentPage === 1 ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage - 1}}"
+      disabled="{{currentPage === 1}}"
+    >
+      上一页
+    </button>
+    
+    <text class="page-info">第 {{currentPage}} 页 / 共 {{totalPages}} 页</text>
+    
+    <button 
+      class="page-btn {{currentPage === totalPages ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage + 1}}"
+      disabled="{{currentPage === totalPages}}"
+    >
+      下一页
+    </button>
+  </view>
+</view>

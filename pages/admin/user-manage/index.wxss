@@ -1,0 +1,279 @@
+/* pages/admin/user-manage/index.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 头部 */
+.header {
+  display: flex;
+  align-items: center;
+  background: white;
+  padding: 20rpx 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  color: #007AFF;
+  font-size: 28rpx;
+  margin-right: 20rpx;
+}
+
+.back-icon {
+  margin-right: 8rpx;
+  font-weight: bold;
+}
+
+.title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+/* 搜索和筛选 */
+.filters {
+  background: white;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #f8f9fa;
+  border-radius: 8rpx;
+  padding: 0 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.search-input {
+  flex: 1;
+  height: 60rpx;
+  font-size: 28rpx;
+  padding: 0;
+}
+
+.search-icon {
+  font-size: 28rpx;
+  color: #666;
+  padding: 10rpx;
+}
+
+.filter-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.filter-select {
+  flex: 1;
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8f9fa;
+  padding: 16rpx 20rpx;
+  border-radius: 8rpx;
+  font-size: 26rpx;
+  color: #333;
+}
+
+.filter-arrow {
+  font-size: 20rpx;
+  color: #666;
+}
+
+/* 用户列表 */
+.user-list {
+  margin-bottom: 30rpx;
+}
+
+.user-card {
+  background: white;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+  background: #f8f9fa;
+}
+
+.user-info {
+  flex: 1;
+}
+
+.user-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #333;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.user-mobile {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 4rpx;
+}
+
+.user-role {
+  font-size: 22rpx;
+  padding: 4rpx 8rpx;
+  border-radius: 4rpx;
+  display: inline-block;
+  margin-bottom: 4rpx;
+}
+
+.user-role.admin {
+  background: #d4edda;
+  color: #155724;
+}
+
+.user-role.user {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.user-time {
+  font-size: 20rpx;
+  color: #999;
+  display: block;
+}
+
+.user-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+  margin-left: 16rpx;
+}
+
+.btn-role, .btn-reset {
+  border: none;
+  border-radius: 6rpx;
+  padding: 8rpx 16rpx;
+  font-size: 20rpx;
+  font-weight: 500;
+  min-width: 100rpx;
+}
+
+.btn-promote {
+  background: #28a745;
+  color: white;
+}
+
+.btn-demote {
+  background: #ffc107;
+  color: #333;
+}
+
+.btn-reset {
+  background: #6c757d;
+  color: white;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 60rpx 20rpx;
+  background: white;
+  border-radius: 16rpx;
+}
+
+.empty-icon {
+  font-size: 60rpx;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.empty-text {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+}
+
+/* 加载状态 */
+.loading {
+  text-align: center;
+  padding: 40rpx;
+  background: white;
+  border-radius: 16rpx;
+}
+
+.loading-text {
+  font-size: 28rpx;
+  color: #666;
+}
+
+/* 分页 */
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+  background: white;
+  padding: 20rpx;
+  border-radius: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.page-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.page-btn.disabled {
+  background: #ccc;
+  opacity: 0.6;
+}
+
+.page-info {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .user-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .user-avatar {
+    margin-right: 0;
+    margin-bottom: 16rpx;
+  }
+  
+  .user-actions {
+    flex-direction: row;
+    margin-left: 0;
+    margin-top: 16rpx;
+    justify-content: center;
+  }
+  
+  .btn-role, .btn-reset {
+    min-width: auto;
+    flex: 1;
+  }
+}

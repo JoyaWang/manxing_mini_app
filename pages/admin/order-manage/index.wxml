@@ -1,0 +1,104 @@
+<!--pages/admin/order-manage/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="back-button" bindtap="onBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">订单管理</text>
+  </view>
+
+  <!-- 搜索和筛选 -->
+  <view class="filters">
+    <view class="search-box">
+      <input 
+        class="search-input" 
+        placeholder="搜索订单号/用户名" 
+        value="{{searchKeyword}}" 
+        bindinput="onSearchInput"
+        bindconfirm="onSearchConfirm"
+      />
+      <text class="search-icon" bindtap="onSearchConfirm">🔍</text>
+    </view>
+
+    <view class="filter-row">
+      <picker class="filter-select" value="{{statusFilter}}" bindchange="onStatusChange">
+        <view class="filter-label">
+          <text>{{statusFilter === 'all' ? '全部状态' : statusFilter === 'pending' ? '待付款' : statusFilter === 'processing' ? '处理中' : statusFilter === 'shipped' ? '已发货' : '已完成'}}</text>
+          <text class="filter-arrow">▼</text>
+        </view>
+      </picker>
+    </view>
+  </view>
+
+  <!-- 订单列表 -->
+  <view class="order-list">
+    <block wx:for="{{orders}}" wx:key="id">
+      <view class="order-card">
+        <view class="order-header">
+          <text class="order-id">订单号: {{item.orderNumber}}</text>
+          <text class="order-time">{{item.createTime}}</text>
+        </view>
+
+        <view class="order-info">
+          <text class="order-user">用户: {{item.userName}}</text>
+          <text class="order-amount">金额: ¥{{item.totalAmount}}</text>
+        </view>
+
+        <view class="order-status-row">
+          <text class="order-status {{item.status}}">
+            {{item.status === 'pending' ? '待付款' : item.status === 'processing' ? '处理中' : item.status === 'shipped' ? '已发货' : '已完成'}}
+          </text>
+          
+          <view class="order-actions">
+            <button 
+              class="btn-action" 
+              bindtap="onUpdateOrderStatus" 
+              data-id="{{item.id}}" 
+              data-status="{{item.status}}"
+              wx:if="{{item.status !== 'completed'}}"
+            >
+              {{item.status === 'pending' ? '确认付款' : item.status === 'processing' ? '发货' : item.status === 'shipped' ? '完成订单' : ''}}
+            </button>
+            <button class="btn-detail" bindtap="onViewOrderDetail" data-id="{{item.id}}">详情</button>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 空状态 -->
+    <view wx:if="{{orders.length === 0 && !loading}}" class="empty-state">
+      <text class="empty-icon">📋</text>
+      <text class="empty-text">暂无订单</text>
+    </view>
+
+    <!-- 加载状态 -->
+    <view wx:if="{{loading}}" class="loading">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 分页 -->
+  <view wx:if="{{totalPages > 1}}" class="pagination">
+    <button 
+      class="page-btn {{currentPage === 1 ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage - 1}}"
+      disabled="{{currentPage === 1}}"
+    >
+      上一页
+    </button>
+    
+    <text class="page-info">第 {{currentPage}} 页 / 共 {{totalPages}} 页</text>
+    
+    <button 
+      class="page-btn {{currentPage === totalPages ? 'disabled' : ''}}" 
+      bindtap="onPageChange" 
+      data-page="{{currentPage + 1}}"
+      disabled="{{currentPage === totalPages}}"
+    >
+      下一页
+    </button>
+  </view>
+</view>

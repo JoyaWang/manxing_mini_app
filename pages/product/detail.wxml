@@ -1,0 +1,127 @@
+<!--pages/product/detail.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else>
+    <!-- 返回按钮 -->
+    <view class="back-button" bindtap="onGoBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    
+    <!-- 商品图片轮播 -->
+    <swiper class="product-swiper" indicator-dots="{{true}}" autoplay="{{true}}">
+      <swiper-item wx:for="{{product.images || [product.image]}}" wx:key="*this">
+        <image class="product-image" src="{{item}}" mode="aspectFit" />
+      </swiper-item>
+    </swiper>
+
+    <!-- 商品信息 -->
+    <view class="product-info card">
+      <view class="price-section">
+        <text class="current-price">¥{{selectedSku ? selectedSku.price : product.price}}</text>
+        <text class="original-price" wx:if="{{product.originalPrice}}">
+          ¥{{product.originalPrice}}
+        </text>
+      </view>
+
+      <text class="product-name">{{product.name}}</text>
+      
+      <view class="meta-info">
+        <text>销量: {{product.sales || 0}}</text>
+        <text>库存: {{selectedSku ? selectedSku.stock : product.stock}}</text>
+      </view>
+    </view>
+
+    <!-- SKU选择 -->
+    <view class="sku-section card" bindtap="onOpenSkuPicker">
+      <text class="section-title">选择规格</text>
+      <view class="sku-selected">
+        <text wx:if="{{selectedSku}}">{{selectedSku.name}}</text>
+        <text wx:else class="placeholder">请选择规格</text>
+      </view>
+      <text class="arrow">›</text>
+    </view>
+
+    <!-- 商品详情 -->
+    <view class="detail-section card">
+      <text class="section-title">商品详情</text>
+      <rich-text class="product-detail" nodes="{{product.detail}}" />
+    </view>
+
+    <!-- 底部操作栏 -->
+    <view class="action-bar">
+      <view class="action-left">
+        <view class="action-item" bindtap="onGoToCart">
+          <text class="icon">🛒</text>
+          <text class="badge" wx:if="{{cartCount > 0}}">{{cartCount}}</text>
+          <text>购物车</text>
+        </view>
+        <view class="action-item" bindtap="onToggleFavorite">
+          <text class="icon {{isFavorite ? 'active' : ''}}">❤️</text>
+          <text>收藏</text>
+        </view>
+      </view>
+      
+      <view class="action-right">
+        <button class="btn-add-cart" bindtap="onAddToCart">加入购物车</button>
+        <button class="btn-buy-now" bindtap="onBuyNow">立即购买</button>
+      </view>
+    </view>
+  </view>
+
+  <!-- SKU选择弹窗 -->
+  <view class="sku-modal {{showSkuPicker ? 'show' : ''}}">
+    <view class="modal-content">
+      <view class="modal-header">
+        <image class="product-thumb" src="{{product.image}}" />
+        <view class="product-info">
+          <text class="price">¥{{selectedSku ? selectedSku.price : product.price}}</text>
+          <text class="stock">库存: {{selectedSku ? selectedSku.stock : product.stock}}</text>
+          <text class="selected-sku" wx:if="{{selectedSku}}">已选: {{selectedSku.name}}</text>
+        </view>
+        <text class="close-btn" bindtap="onCloseSkuPicker">×</text>
+      </view>
+
+      <view class="sku-options">
+        <text class="option-title">规格</text>
+        <view class="option-list">
+          <view 
+            class="option-item {{selectedSku && selectedSku.id === sku.id ? 'active' : ''}}"
+            wx:for="{{product.skus}}"
+            wx:key="id"
+            data-sku="{{sku}}"
+            bindtap="onSelectSku"
+          >
+            <text>{{sku.name}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="quantity-section">
+        <text class="quantity-title">数量</text>
+        <view class="quantity-control">
+          <text class="btn-decrease" bindtap="onDecrease">-</text>
+          <input 
+            class="quantity-input" 
+            type="number" 
+            value="{{quantity}}"
+            bindinput="onQuantityChange"
+          />
+          <text class="btn-increase" bindtap="onIncrease">+</text>
+        </view>
+      </view>
+
+      <button class="btn-confirm" bindtap="onAddToCart">确定</button>
+    </view>
+  </view>
+
+  <!-- 遮罩层 -->
+  <view 
+    class="mask {{showSkuPicker ? 'show' : ''}}" 
+    bindtap="onCloseSkuPicker"
+  ></view>
+</view>

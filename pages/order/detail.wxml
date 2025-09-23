@@ -1,0 +1,134 @@
+<!--pages/order/detail.wxml-->
+<view class="container">
+  <!-- 加载状态 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:else>
+    <!-- 返回按钮 -->
+    <view class="back-button" bindtap="onGoBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    
+    <!-- 订单状态 -->
+    <view class="status-section card {{order.status}}">
+      <text class="status-text">{{getStatusText(order.status)}}</text>
+      <text class="status-desc">{{getStatusDesc(order.status)}}</text>
+    </view>
+
+    <!-- 收货地址 -->
+    <view class="address-section card">
+      <view class="address-header">
+        <text class="name">{{order.address.name}}</text>
+        <text class="phone">{{order.address.phone}}</text>
+      </view>
+      <text class="address-detail">{{order.address.province}}{{order.address.city}}{{order.address.district}}{{order.address.detail}}</text>
+    </view>
+
+    <!-- 商品信息 -->
+    <view class="products-section card">
+      <text class="section-title">商品信息</text>
+      <view class="order-items">
+        <view class="order-item" wx:for="{{order.items}}" wx:key="id">
+          <image class="item-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="item-info">
+            <text class="item-name">{{item.name}}</text>
+            <text class="item-sku" wx:if="{{item.skuName}}">{{item.skuName}}</text>
+            <view class="item-price">
+              <text class="price">¥{{item.price}}</text>
+              <text class="quantity">x{{item.quantity}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 订单信息 -->
+    <view class="info-section card">
+      <text class="section-title">订单信息</text>
+      <view class="info-row">
+        <text>订单编号</text>
+        <view class="order-no">
+          <text>{{order.orderNo}}</text>
+          <text class="copy-btn" bindtap="onCopyOrderNo">复制</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text>下单时间</text>
+        <text>{{util.formatTime(order.createTime)}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.payTime}}">
+        <text>支付时间</text>
+        <text>{{util.formatTime(order.payTime)}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.shipTime}}">
+        <text>发货时间</text>
+        <text>{{util.formatTime(order.shipTime)}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.completeTime}}">
+        <text>完成时间</text>
+        <text>{{util.formatTime(order.completeTime)}}</text>
+      </view>
+      <view class="info-row" wx:if="{{order.remark}}">
+        <text>订单备注</text>
+        <text class="remark">{{order.remark}}</text>
+      </view>
+    </view>
+
+    <!-- 价格明细 -->
+    <view class="price-section card">
+      <view class="price-row">
+        <text>商品金额</text>
+        <text>¥{{order.totalAmount.toFixed(2)}}</text>
+      </view>
+      <view class="price-row">
+        <text>运费</text>
+        <text>¥0.00</text>
+      </view>
+      <view class="price-row total">
+        <text>实付款</text>
+        <text class="total-price">¥{{order.totalAmount.toFixed(2)}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部操作栏 -->
+  <view class="action-bar" wx:if="{{!loading}}">
+    <button 
+      class="btn-action" 
+      wx:if="{{order.status === 'pending'}}"
+      bindtap="onCancelOrder"
+    >
+      取消订单
+    </button>
+    <button 
+      class="btn-action primary" 
+      wx:if="{{order.status === 'pending'}}"
+      bindtap="onPayOrder"
+    >
+      去支付
+    </button>
+    <button 
+      class="btn-action" 
+      wx:if="{{order.status === 'shipped'}}"
+      bindtap="onViewLogistics"
+    >
+      查看物流
+    </button>
+    <button 
+      class="btn-action primary" 
+      wx:if="{{order.status === 'shipped'}}"
+      bindtap="onConfirmReceipt"
+    >
+      确认收货
+    </button>
+    <button 
+      class="btn-action" 
+      bindtap="onContactCustomerService"
+    >
+      联系客服
+    </button>
+  </view>
+</view>

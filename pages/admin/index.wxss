@@ -1,0 +1,270 @@
+/* pages/admin/index.wxss */
+.container {
+  padding: 20rpx;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* 返回按钮样式 */
+.back-button {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  margin-bottom: 20rpx;
+  color: #007AFF;
+  font-size: 32rpx;
+}
+
+.back-icon {
+  margin-right: 10rpx;
+  font-weight: bold;
+}
+
+.back-text {
+  font-size: 28rpx;
+}
+
+/* 管理后台头部 */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 30rpx;
+  border-radius: 16rpx;
+  margin-bottom: 30rpx;
+  color: white;
+}
+
+.header-title .title {
+  font-size: 36rpx;
+  font-weight: bold;
+  display: block;
+}
+
+.header-title .subtitle {
+  font-size: 24rpx;
+  opacity: 0.9;
+}
+
+.header-user {
+  display: flex;
+  align-items: center;
+}
+
+.user-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  margin-right: 16rpx;
+}
+
+.user-name {
+  font-size: 28rpx;
+  font-weight: 500;
+}
+
+/* 数据概览 */
+.stats-section {
+  margin-bottom: 30rpx;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.stat-card {
+  background: white;
+  padding: 30rpx;
+  border-radius: 16rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+}
+
+.stat-number {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #666;
+  display: block;
+  margin-top: 8rpx;
+}
+
+/* 紧凑网格布局 */
+.compact-grid {
+  margin-bottom: 30rpx;
+}
+
+.compact-row {
+  display: flex;
+  gap: 16rpx;
+  margin-bottom: 16rpx;
+}
+
+.compact-card {
+  flex: 1;
+  background: white;
+  padding: 24rpx;
+  border-radius: 12rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+  min-height: 120rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.compact-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.1);
+}
+
+.compact-icon {
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+}
+
+.compact-title {
+  font-size: 24rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4rpx;
+}
+
+.compact-stats {
+  font-size: 18rpx;
+  color: #666;
+  font-weight: 500;
+}
+
+/* 紧凑工具栏 */
+.quick-toolbar {
+  margin-bottom: 30rpx;
+}
+
+.toolbar-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+  color: #333;
+}
+
+.toolbar-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12rpx;
+}
+
+.tool-btn {
+  background: #f8f9fa;
+  border: 1rpx solid #e9ecef;
+  border-radius: 8rpx;
+  padding: 16rpx 12rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #495057;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 80rpx;
+}
+
+.tool-btn:active {
+  background: #e9ecef;
+}
+
+.tool-btn.primary {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  color: white;
+  border: none;
+}
+
+.tool-btn.backend {
+  background: #6f42c1;
+  color: white;
+  border: none;
+  position: relative;
+}
+
+.tool-icon {
+  font-size: 28rpx;
+  margin-bottom: 6rpx;
+}
+
+.tool-text {
+  font-size: 20rpx;
+}
+
+.backend-badge {
+  position: absolute;
+  top: 6rpx;
+  right: 6rpx;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 2rpx 6rpx;
+  border-radius: 6rpx;
+  font-size: 16rpx;
+  font-weight: 500;
+}
+
+/* 底部导航 */
+.bottom-nav {
+  text-align: center;
+  display: flex;
+  gap: 20rpx;
+  justify-content: center;
+}
+
+.btn-back {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  flex: 1;
+}
+
+.btn-back:active {
+  opacity: 0.8;
+}
+
+.btn-switch {
+  background: #4ecdc4;
+  color: white;
+  border: none;
+  border-radius: 12rpx;
+  padding: 24rpx 48rpx;
+  font-size: 28rpx;
+  font-weight: 500;
+  flex: 1;
+}
+
+.btn-switch:active {
+  opacity: 0.8;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+  }
+}

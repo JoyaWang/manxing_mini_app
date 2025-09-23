@@ -1,0 +1,75 @@
+<!--pages/user/user.wxml-->
+<view class="container">
+  <!-- 用户信息 -->
+  <view class="user-section">
+    <view class="user-info" wx:if="{{hasUserInfo}}">
+      <image class="avatar" src="{{avatarUrl}}" />
+      <view class="user-details">
+        <text class="username">{{nickName}}</text>
+        <text class="welcome">欢迎来到商城小程序</text>
+      </view>
+    </view>
+    <view class="login-btn" wx:else bindtap="onNavigateToLogin">
+      <text>点击登录</text>
+    </view>
+  </view>
+
+  <!-- 订单状态 -->
+  <view class="order-stats-section card">
+    <view class="stats-header">
+      <text class="title">我的订单</text>
+      <text class="view-all" bindtap="onNavigateToOrders" data-tab="all">查看全部 ></text>
+    </view>
+    <view class="stats-grid">
+      <view 
+        class="stat-item" 
+        wx:for="{{['pending', 'paid', 'shipped', 'completed']}}"
+        wx:key="*this"
+        data-tab="{{item}}"
+        bindtap="onNavigateToOrders"
+      >
+        <text class="stat-count">{{orderStats[item]}}</text>
+        <text class="stat-label">{{getOrderStatusText(item)}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 主功能菜单 -->
+  <view class="menu-section card">
+    <view 
+      class="menu-item" 
+      wx:for="{{menuItems}}"
+      wx:key="name"
+      data-index="{{index}}"
+      bindtap="handleMenuItemTap"
+    >
+      <view class="menu-icon-container">
+        <text class="menu-icon">{{item.icon === 'order' ? '📦' : 
+                              item.icon === 'address' ? '📍' : 
+                              item.icon === 'favorite' ? '❤️' : 
+                              item.icon === 'payment' ? '💳' : 
+                              item.icon === 'settings' ? '⚙️' : ''}}</text>
+      </view>
+      <text class="menu-name">{{item.name}}</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 切换身份入口 -->
+  <view class="menu-section card" wx:if="{{userInfo && isAdmin}}">
+    <view class="menu-item" bindtap="switchToAdmin">
+      <view class="menu-icon-container">
+        <text class="menu-icon">👑</text>
+      </view>
+      <text class="menu-name">切换到管理界面</text>
+      <text class="menu-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="action-section">
+    <button class="btn-contact" bindtap="onContactCustomerService">联系客服</button>
+    <button class="btn-about" bindtap="onAboutUs">关于我们</button>
+    <button class="btn-logout" wx:if="{{userInfo}}" bindtap="onLogout">退出登录</button>
+  </view>
+</view>

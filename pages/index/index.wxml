@@ -1,0 +1,140 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="onSearchTap">
+    <view class="search-input">
+      <text class="icon-search">🔍</text>
+      <text class="search-text">搜索商品</text>
+    </view>
+  </view>
+
+  <!-- 轮播图 -->
+  <swiper
+    wx:if="{{homeSections.banners}}"
+    class="banner-swiper"
+    indicator-dots="{{true}}"
+    autoplay="{{true}}"
+    interval="{{3000}}"
+    circular="{{true}}"
+  >
+    <swiper-item wx:for="{{banners}}" wx:key="id">
+      <image
+        class="banner-image"
+        src="{{item.image}}"
+        mode="aspectFill"
+        data-link="{{item.link}}"
+        bindtap="onBannerTap"
+      />
+    </swiper-item>
+  </swiper>
+
+  <!-- 分类导航 -->
+  <view wx:if="{{homeSections.categories}}" class="category-grid">
+    <view
+      class="category-item"
+      wx:for="{{categories}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      data-name="{{item.name}}"
+      bindtap="onCategoryTap"
+    >
+      <text class="category-icon">{{item.icon || '📦'}}</text>
+      <text class="category-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 推荐商品 -->
+  <view wx:if="{{homeSections.featured}}" class="section">
+    <view class="section-header">
+      <text class="section-title">精选推荐</text>
+      <text class="section-more" bindtap="onViewAll" data-type="featured">查看全部 ></text>
+    </view>
+    <scroll-view class="product-scroll" scroll-x="true">
+      <view class="product-list-horizontal">
+        <view
+          class="product-card-horizontal"
+          wx:for="{{featuredProducts}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onProductTap"
+        >
+          <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="product-info">
+            <text class="product-name">{{item.name}}</text>
+            <view class="product-price">
+              <text class="price">¥{{item.price}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 新品上市 -->
+  <view wx:if="{{homeSections.new}}" class="section">
+    <view class="section-header">
+      <text class="section-title">新品上市</text>
+      <text class="section-more" bindtap="onViewAll" data-type="new">查看全部 ></text>
+    </view>
+    <view class="product-grid">
+      <view
+        class="product-card"
+        wx:for="{{newProducts}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onProductTap"
+      >
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          <text class="product-tag" wx:if="{{item.isNew}}">新品</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 热卖商品 -->
+  <view wx:if="{{homeSections.hot}}" class="section">
+    <view class="section-header">
+      <text class="section-title">热卖商品</text>
+      <text class="section-more" bindtap="onViewAll" data-type="hot">查看全部 ></text>
+    </view>
+    <view class="product-grid">
+      <view
+        class="product-card"
+        wx:for="{{hotProducts}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onProductTap"
+      >
+        <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <view class="product-price">
+            <text class="price">¥{{item.price}}</text>
+            <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+          </view>
+          <text class="product-sales">已售{{item.sales || 0}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 加载状态 -->
+  <view class="loading-container" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 回到顶部按钮 -->
+  <view
+    class="back-to-top {{scrollTop > 300 ? 'show' : ''}}"
+    bindtap="scrollToTop"
+  >
+    <text class="icon-top">↑</text>
+  </view>
+</view>

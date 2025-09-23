@@ -1,0 +1,37 @@
+<!--pages/admin/section-manage/index.wxml-->
+<view class="container">
+  <!-- 头部 -->
+  <view class="header">
+    <view class="back-button" bindtap="onBack">
+      <text class="back-icon">←</text>
+      <text class="back-text">返回</text>
+    </view>
+    <text class="title">首页板块管理</text>
+  </view>
+
+  <!-- 板块列表 -->
+  <view class="section-list">
+    <block wx:for="{{sections}}" wx:for-item="section" wx:for-index="key" wx:key="key">
+      <view class="section-item">
+        <view class="section-info">
+          <text class="section-name">{{section.name}}</text>
+          <text class="section-status {{section.enabled ? 'enabled' : 'disabled'}}">
+            {{section.enabled ? '已启用' : '已禁用'}}
+          </text>
+        </view>
+        
+        <switch 
+          checked="{{section.enabled}}" 
+          bindchange="onToggleSection" 
+          data-section="{{key}}"
+          class="section-switch"
+        />
+      </view>
+    </block>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <button class="btn-save" bindtap="saveSectionConfig">保存配置</button>
+  </view>
+</view>

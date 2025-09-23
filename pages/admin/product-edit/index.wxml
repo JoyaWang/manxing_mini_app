@@ -1,0 +1,253 @@
+<!--pages/admin/product-edit/index.wxml-->
+<view class="container">
+  <!-- 头部标题 -->
+  <view class="header">
+    <view class="title">{{isEdit ? '编辑商品' : '添加商品'}}</view>
+    <button class="weui-btn weui-btn_mini weui-btn_default" bindtap="onBack">
+      <text class="weui-icon weui-icon-back"></text> 返回
+    </button>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="weui-loadmore">
+    <view class="weui-loading"></view>
+    <view class="weui-loadmore__tips">加载中...</view>
+  </view>
+
+  <!-- 表单内容 -->
+  <scroll-view wx:else scroll-y class="form-content">
+    <!-- 基本信息 -->
+    <view class="form-section">
+      <view class="section-title">基本信息</view>
+      
+      <view class="weui-cells weui-cells_after-title">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">商品名称</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input 
+              class="weui-input" 
+              value="{{formData.name}}" 
+              placeholder="请输入商品名称"
+              data-field="name"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+        
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">商品价格</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input 
+              class="weui-input" 
+              type="digit"
+              value="{{formData.price}}" 
+              placeholder="请输入商品价格"
+              data-field="price"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+        
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">原价</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input 
+              class="weui-input" 
+              type="digit"
+              value="{{formData.originalPrice}}" 
+              placeholder="请输入原价（可选）"
+              data-field="originalPrice"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+        
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">库存数量</view>
+          </view>
+          <view class="weui-cell__bd">
+            <input 
+              class="weui-input" 
+              type="number"
+              value="{{formData.stock}}"
+              placeholder="请输入库存数量"
+              data-field="stock"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+
+
+    <!-- 商品状态 -->
+    <view class="form-section">
+      <view class="section-title">商品状态</view>
+      <view class="weui-cells">
+        <view class="weui-cell">
+          <view class="weui-cell__bd">是否上架</view>
+          <view class="weui-cell__ft">
+            <switch
+              checked="{{formData.status === 'published'}}"
+              bindchange="onStatusChange"
+            />
+          </view>
+        </view>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd">推荐商品</view>
+          <view class="weui-cell__ft">
+            <switch
+              checked="{{formData.isFeatured}}"
+              bindchange="onFeaturedChange"
+            />
+          </view>
+        </view>
+
+        <view class="weui-cell">
+          <view class="weui-cell__bd">新品上市</view>
+          <view class="weui-cell__ft">
+            <switch
+              checked="{{formData.isNew}}"
+              bindchange="onNewChange"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分类选择 -->
+    <view class="form-section">
+      <view class="section-title">商品分类</view>
+      <view class="weui-cells">
+        <picker 
+          mode="selector" 
+          range="{{categories}}" 
+          range-key="name"
+          value="{{categoryIndex}}"
+          bindchange="onCategoryChange"
+        >
+          <view class="weui-cell weui-cell_access">
+            <view class="weui-cell__bd">
+              <text>{{formData.categoryId ? selectedCategoryName : '请选择分类'}}</text>
+            </view>
+            <view class="weui-cell__ft">
+              <text class="weui-icon weui-icon-arrow-right"></text>
+            </view>
+          </view>
+        </picker>
+      </view>
+    </view>
+
+    <!-- 商品图片 -->
+    <view class="form-section">
+      <view class="section-title">商品图片</view>
+      <view class="images-section">
+        <!-- 上传按钮 -->
+        <view class="upload-btn" bindtap="onUploadImage">
+          <text class="weui-icon weui-icon-add" style="font-size: 48rpx;"></text>
+          <text>上传图片</text>
+          <text class="upload-tip">最多可上传9张图片</text>
+        </view>
+
+        <!-- 图片列表 -->
+        <view class="image-list">
+          <view 
+            class="image-item {{formData.mainImage === image ? 'main-image' : ''}}" 
+            wx:for="{{formData.images}}" 
+            wx:key="index"
+          >
+            <image src="{{image}}" mode="aspectFill" />
+            
+            <!-- 操作按钮 -->
+            <view class="image-actions">
+              <view 
+                class="action-btn {{formData.mainImage === image ? 'active' : ''}}" 
+                bindtap="onSetMainImage" 
+                data-index="{{index}}"
+              >
+                <text class="weui-icon weui-icon-camera"></text>
+                <text>{{formData.mainImage === image ? '主图' : '设为主图'}}</text>
+              </view>
+              
+              <view class="action-btn delete" bindtap="onDeleteImage" data-index="{{index}}">
+                <text class="weui-icon weui-icon-cancel"></text>
+                <text>删除</text>
+              </view>
+            </view>
+
+            <!-- 主图标识 -->
+            <view class="main-badge" wx:if="{{formData.mainImage === image}}">
+              主图
+            </view>
+          </view>
+        </view>
+
+        <!-- 上传进度 -->
+        <view class="upload-progress" wx:if="{{uploading}}">
+          <view class="weui-progress">
+            <view class="weui-progress__bar">
+              <view class="weui-progress__inner-bar" style="width: {{uploadProgress}}%"></view>
+            </view>
+          </view>
+          <text>上传中... {{uploadProgress}}%</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 商品描述 -->
+    <view class="form-section">
+      <view class="section-title">商品描述</view>
+      <view class="weui-cells">
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">简短描述</view>
+          </view>
+          <view class="weui-cell__bd">
+            <textarea 
+              class="weui-textarea" 
+              value="{{formData.description}}" 
+              placeholder="请输入商品简短描述"
+              data-field="description"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+        
+        <view class="weui-cell weui-cell_input">
+          <view class="weui-cell__hd">
+            <view class="weui-label">详细描述</view>
+          </view>
+          <view class="weui-cell__bd">
+            <textarea 
+              class="weui-textarea" 
+              value="{{formData.detail}}" 
+              placeholder="请输入商品详细描述（支持HTML）"
+              data-field="detail"
+              bindinput="onInputChange"
+            />
+          </view>
+        </view>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-section">
+    <button 
+      class="weui-btn weui-btn_primary" 
+      bindtap="onSubmit"
+      loading="{{submitting}}"
+      disabled="{{submitting}}"
+    >
+      {{submitting ? '提交中...' : (isEdit ? '更新商品' : '创建商品')}}
+    </button>
+  </view>
+</view>

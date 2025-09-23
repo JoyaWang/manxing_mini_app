@@ -1,0 +1,41 @@
+{
+  "name": "wechat-mall-miniprogram",
+  "version": "1.0.0",
+  "description": "微信商城小程序 - 支持腾讯云和Supabase后端切换",
+  "main": "app.js",
+  "scripts": {
+    "dev": "微信开发者工具 -> 打开项目 -> 点击预览",
+    "build": "微信开发者工具 -> 上传代码",
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write \"**/*.{js,json,wxml,wxss}\""
+  },
+  "keywords": [
+    "微信小程序",
+    "商城",
+    "电商",
+    "腾讯云",
+    "Supabase"
+  ],
+  "author": "开发者",
+  "license": "MIT",
+  "devDependencies": {
+    "@vant/weapp": "^1.10.14"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/your-username/wechat-mall-miniprogram.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/wechat-mall-miniprogram/issues"
+  },
+  "homepage": "https://github.com/your-username/wechat-mall-miniprogram#readme",
+  "type": "commonjs",
+  "miniprogram": "miniprogram",
+  "__warning__": "微信开发者工具构建npm时可能会报long包错误，这是mysql2的依赖，可以忽略",
+  "dependencies": {
+    "weui-miniprogram": "^1.5.6"
+  }
+}

@@ -1,0 +1,46 @@
+<!-- pages/login/index.wxml -->
+<view class="container">
+  <view class="logo-container">
+    <!-- 使用微信默认图标替代缺失的logo -->
+    <icon type="success" size="80" color="#07C160"></icon>
+    <text class="title">商城小程序</text>
+  </view>
+
+  <view class="login-type-selector">
+    <view class="selector-item {{loginType === 'user' ? 'active' : ''}}" bindtap="switchLoginType" data-type="user">
+      消费者登录
+    </view>
+    <view class="selector-item {{loginType === 'admin' ? 'active' : ''}}" bindtap="switchLoginType" data-type="admin">
+      管理员登录
+    </view>
+  </view>
+
+  <view class="form-container">
+    <view class="input-group">
+      <text class="label">用户名</text>
+      <input class="input" type="text" placeholder="请输入用户名" bindinput="inputUsername" value="{{username}}" />
+    </view>
+    
+    <view class="input-group">
+      <text class="label">密码</text>
+      <input class="input" type="password" placeholder="请输入密码" bindinput="inputPassword" value="{{password}}" />
+    </view>
+
+    <button class="login-btn" bindtap="handleLogin">登录</button>
+    
+    <view class="divider">
+      <view class="line"></view>
+      <text>或</text>
+      <view class="line"></view>
+    </view>
+    
+    <button class="wx-login-btn" bindtap="wxLogin">
+      <icon type="success" size="24" color="#09BB07"></icon>
+      微信一键登录
+    </button>
+  </view>
+
+  <view class="footer">
+    <text>© 2025 商城小程序 版权所有</text>
+  </view>
+</view>

@@ -1,0 +1,56 @@
+<!--pages/category/category.wxml-->
+<view class="container">
+  <!-- 搜索栏 -->
+  <view class="search-bar" bindtap="onSearch">
+    <view class="search-input">
+      <text class="icon-search">🔍</text>
+      <text class="search-text">搜索商品</text>
+    </view>
+  </view>
+
+  <view class="category-content">
+    <!-- 左侧分类列表 -->
+    <scroll-view class="category-list" scroll-y>
+      <view 
+        class="category-item {{selectedCategory && selectedCategory.id === item.id ? 'active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="id"
+        data-category="{{item}}"
+        bindtap="onSelectCategory"
+      >
+        <text class="category-text">{{item.name}}</text>
+      </view>
+    </scroll-view>
+
+    <!-- 右侧商品列表 -->
+    <scroll-view class="product-list" scroll-y bindscrolltolower="onReachBottom">
+      <view class="product-grid">
+        <view 
+          class="product-card"
+          wx:for="{{products}}"
+          wx:key="id"
+          data-id="{{item.id}}"
+          bindtap="onSelectProduct"
+        >
+          <image class="product-image" src="{{item.image}}" mode="aspectFill" />
+          <view class="product-info">
+            <text class="product-name">{{item.name}}</text>
+            <view class="product-price">
+              <text class="price">¥{{item.price}}</text>
+              <text class="original-price" wx:if="{{item.originalPrice}}">¥{{item.originalPrice}}</text>
+            </view>
+            <text class="product-sales">已售{{item.sales || 0}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 加载更多 -->
+      <view class="load-more" wx:if="{{loading}}">
+        <text>加载中...</text>
+      </view>
+      <view class="load-more" wx:if="{{!hasMore && !loading}}">
+        <text>没有更多商品了</text>
+      </view>
+    </scroll-view>
+  </view>
+</view>
