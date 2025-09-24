@@ -1,253 +1,353 @@
-<!--pages/admin/product-edit/index.wxml-->
 <view class="container">
-  <!-- 头部标题 -->
-  <view class="header">
-    <view class="title">{{isEdit ? '编辑商品' : '添加商品'}}</view>
-    <button class="weui-btn weui-btn_mini weui-btn_default" bindtap="onBack">
-      <text class="weui-icon weui-icon-back"></text> 返回
-    </button>
+  <!-- 页面标题 -->
+  <view class="page-header">
+    <view class="header-left">
+      <button class="btn-back" bindtap="onBack">
+        <text class="back-icon">←</text>
+        <text>返回</text>
+      </button>
+    </view>
+    <text class="page-title">{{isEdit ? '编辑商品' : '创建商品'}}</text>
+    <view class="header-right"></view>
   </view>
 
-  <!-- 加载状态 -->
-  <view wx:if="{{loading}}" class="weui-loadmore">
-    <view class="weui-loading"></view>
-    <view class="weui-loadmore__tips">加载中...</view>
-  </view>
-
-  <!-- 表单内容 -->
-  <scroll-view wx:else scroll-y class="form-content">
-    <!-- 基本信息 -->
-    <view class="form-section">
-      <view class="section-title">基本信息</view>
-      
-      <view class="weui-cells weui-cells_after-title">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">商品名称</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input 
-              class="weui-input" 
-              value="{{formData.name}}" 
-              placeholder="请输入商品名称"
-              data-field="name"
-              bindinput="onInputChange"
-            />
-          </view>
-        </view>
-        
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">商品价格</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input 
-              class="weui-input" 
-              type="digit"
-              value="{{formData.price}}" 
-              placeholder="请输入商品价格"
-              data-field="price"
-              bindinput="onInputChange"
-            />
-          </view>
-        </view>
-        
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">原价</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input 
-              class="weui-input" 
-              type="digit"
-              value="{{formData.originalPrice}}" 
-              placeholder="请输入原价（可选）"
-              data-field="originalPrice"
-              bindinput="onInputChange"
-            />
-          </view>
-        </view>
-        
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">库存数量</view>
-          </view>
-          <view class="weui-cell__bd">
-            <input 
-              class="weui-input" 
-              type="number"
-              value="{{formData.stock}}"
-              placeholder="请输入库存数量"
-              data-field="stock"
-              bindinput="onInputChange"
-            />
-          </view>
-        </view>
-      </view>
+  <!-- 基本信息卡片 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">基本信息</text>
     </view>
-
-
-    <!-- 商品状态 -->
-    <view class="form-section">
-      <view class="section-title">商品状态</view>
-      <view class="weui-cells">
-        <view class="weui-cell">
-          <view class="weui-cell__bd">是否上架</view>
-          <view class="weui-cell__ft">
-            <switch
-              checked="{{formData.status === 'published'}}"
-              bindchange="onStatusChange"
-            />
-          </view>
-        </view>
-
-        <view class="weui-cell">
-          <view class="weui-cell__bd">推荐商品</view>
-          <view class="weui-cell__ft">
-            <switch
-              checked="{{formData.isFeatured}}"
-              bindchange="onFeaturedChange"
-            />
-          </view>
-        </view>
-
-        <view class="weui-cell">
-          <view class="weui-cell__bd">新品上市</view>
-          <view class="weui-cell__ft">
-            <switch
-              checked="{{formData.isNew}}"
-              bindchange="onNewChange"
-            />
-          </view>
-        </view>
+    <view class="card-body">
+      <!-- 商品名称 -->
+      <view class="form-group">
+        <view class="form-label">商品名称</view>
+        <input
+          class="form-input"
+          value="{{formData.name}}"
+          placeholder="请输入商品名称"
+          bindinput="onFormInput"
+          data-field="name"
+        />
       </view>
-    </view>
 
-    <!-- 分类选择 -->
-    <view class="form-section">
-      <view class="section-title">商品分类</view>
-      <view class="weui-cells">
-        <picker 
-          mode="selector" 
-          range="{{categories}}" 
-          range-key="name"
-          value="{{categoryIndex}}"
-          bindchange="onCategoryChange"
-        >
-          <view class="weui-cell weui-cell_access">
-            <view class="weui-cell__bd">
-              <text>{{formData.categoryId ? selectedCategoryName : '请选择分类'}}</text>
-            </view>
-            <view class="weui-cell__ft">
-              <text class="weui-icon weui-icon-arrow-right"></text>
-            </view>
-          </view>
-        </picker>
-      </view>
-    </view>
-
-    <!-- 商品图片 -->
-    <view class="form-section">
-      <view class="section-title">商品图片</view>
-      <view class="images-section">
-        <!-- 上传按钮 -->
-        <view class="upload-btn" bindtap="onUploadImage">
-          <text class="weui-icon weui-icon-add" style="font-size: 48rpx;"></text>
-          <text>上传图片</text>
-          <text class="upload-tip">最多可上传9张图片</text>
-        </view>
-
-        <!-- 图片列表 -->
-        <view class="image-list">
-          <view 
-            class="image-item {{formData.mainImage === image ? 'main-image' : ''}}" 
-            wx:for="{{formData.images}}" 
-            wx:key="index"
+      <!-- 商品分类 -->
+      <view class="form-group">
+        <view class="form-label">商品分类</view>
+        <view class="category-section">
+          <picker
+            class="category-picker"
+            range="{{categories}}"
+            range-key="name"
+            value="{{categoryIndex}}"
+            bindchange="onCategoryChange"
           >
-            <image src="{{image}}" mode="aspectFill" />
-            
-            <!-- 操作按钮 -->
-            <view class="image-actions">
-              <view 
-                class="action-btn {{formData.mainImage === image ? 'active' : ''}}" 
-                bindtap="onSetMainImage" 
-                data-index="{{index}}"
-              >
-                <text class="weui-icon weui-icon-camera"></text>
-                <text>{{formData.mainImage === image ? '主图' : '设为主图'}}</text>
-              </view>
-              
-              <view class="action-btn delete" bindtap="onDeleteImage" data-index="{{index}}">
-                <text class="weui-icon weui-icon-cancel"></text>
-                <text>删除</text>
-              </view>
+            <view class="picker-display">
+              {{categories[categoryIndex] ? categories[categoryIndex].name : '请选择分类'}}
             </view>
+          </picker>
+          <button
+            class="btn-secondary btn-small"
+            bindtap="onCreateCategory"
+          >
+            新建分类
+          </button>
+        </view>
+      </view>
 
-            <!-- 主图标识 -->
-            <view class="main-badge" wx:if="{{formData.mainImage === image}}">
-              主图
+      <!-- 价格信息 -->
+      <view class="price-row">
+        <view class="form-group half-width">
+          <view class="form-label">销售价格</view>
+          <input
+            class="form-input"
+            type="number"
+            value="{{formData.price}}"
+            placeholder="0.00"
+            bindinput="onFormInput"
+            data-field="price"
+          />
+        </view>
+        <view class="form-group half-width">
+          <view class="form-label">原价</view>
+          <input
+            class="form-input"
+            type="number"
+            value="{{formData.originalPrice}}"
+            placeholder="0.00（可选）"
+            bindinput="onFormInput"
+            data-field="originalPrice"
+          />
+        </view>
+      </view>
+
+      <!-- 库存信息 -->
+      <view class="form-group">
+        <view class="form-label">库存数量</view>
+        <input
+          class="form-input"
+          type="number"
+          value="{{formData.stock}}"
+          placeholder="请输入库存数量"
+          bindinput="onFormInput"
+          data-field="stock"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品图片卡片 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">商品图片</text>
+    </view>
+    <view class="card-body">
+      <view class="image-upload-section">
+        <view class="main-image-section">
+          <view class="form-label">主图</view>
+          <view class="image-uploader" bindtap="onUploadMainImage">
+            <view class="upload-placeholder">
+              {{formData.mainImage ? '' : '点击上传主图'}}
+              <image wx:if="{{formData.mainImage}}" src="{{formData.mainImage}}" class="preview-image"></image>
             </view>
           </view>
         </view>
 
-        <!-- 上传进度 -->
-        <view class="upload-progress" wx:if="{{uploading}}">
-          <view class="weui-progress">
-            <view class="weui-progress__bar">
-              <view class="weui-progress__inner-bar" style="width: {{uploadProgress}}%"></view>
+        <view class="gallery-section">
+          <view class="form-label">商品图集</view>
+          <view class="image-gallery">
+            <view
+              class="image-item"
+              wx:for="{{formData.images}}"
+              wx:key="index"
+            >
+              <image src="{{item}}" class="gallery-image"></image>
+              <view class="image-actions">
+                <button class="btn-icon" bindtap="onDeleteImage" data-index="{{index}}">删除</button>
+              </view>
+            </view>
+            <view class="add-image-btn" bindtap="onUploadImage">
+              <text>+</text>
+              <text>添加图片</text>
             </view>
           </view>
-          <text>上传中... {{uploadProgress}}%</text>
         </view>
       </view>
     </view>
+  </view>
 
-    <!-- 商品描述 -->
-    <view class="form-section">
-      <view class="section-title">商品描述</view>
-      <view class="weui-cells">
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">简短描述</view>
+  <!-- SKU管理卡片 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">规格管理</text>
+      <button
+        class="btn-primary btn-small"
+        bindtap="onAddSku"
+      >
+        添加规格
+      </button>
+    </view>
+    <view class="card-body">
+      <view class="sku-list" wx:if="{{formData.skus && formData.skus.length > 0}}">
+        <view
+          class="sku-item"
+          wx:for="{{formData.skus}}"
+          wx:key="index"
+        >
+          <view class="sku-header">
+            <text class="sku-name">规格 {{index + 1}}</text>
+            <view class="sku-actions">
+              <button class="btn-icon" bindtap="onEditSku" data-index="{{index}}">编辑</button>
+              <button class="btn-icon btn-danger" bindtap="onDeleteSku" data-index="{{index}}">删除</button>
+            </view>
           </view>
-          <view class="weui-cell__bd">
-            <textarea 
-              class="weui-textarea" 
-              value="{{formData.description}}" 
-              placeholder="请输入商品简短描述"
-              data-field="description"
-              bindinput="onInputChange"
-            />
-          </view>
-        </view>
-        
-        <view class="weui-cell weui-cell_input">
-          <view class="weui-cell__hd">
-            <view class="weui-label">详细描述</view>
-          </view>
-          <view class="weui-cell__bd">
-            <textarea 
-              class="weui-textarea" 
-              value="{{formData.detail}}" 
-              placeholder="请输入商品详细描述（支持HTML）"
-              data-field="detail"
-              bindinput="onInputChange"
-            />
+          <view class="sku-details">
+            <view class="sku-detail-item">
+              <text class="detail-label">规格名称：</text>
+              <text class="detail-value">{{item.name}}</text>
+            </view>
+            <view class="sku-detail-item">
+              <text class="detail-label">价格：</text>
+              <text class="detail-value">¥{{item.price}}</text>
+            </view>
+            <view class="sku-detail-item">
+              <text class="detail-label">库存：</text>
+              <text class="detail-value">{{item.stock}}</text>
+            </view>
           </view>
         </view>
       </view>
+      <view class="no-skus" wx:else>
+        <text>暂无规格，点击"添加规格"开始创建</text>
+      </view>
     </view>
-  </scroll-view>
+  </view>
+
+  <!-- 商品描述卡片 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">商品描述</text>
+    </view>
+    <view class="card-body">
+      <view class="form-group">
+        <view class="form-label">商品简介</view>
+        <textarea
+          class="form-textarea"
+          value="{{formData.description}}"
+          placeholder="请输入商品简介"
+          bindinput="onFormInput"
+          data-field="description"
+          maxlength="200"
+        />
+      </view>
+
+      <view class="form-group">
+        <view class="form-label">商品详情</view>
+        <textarea
+          class="form-textarea large"
+          value="{{formData.detail}}"
+          placeholder="请输入商品详细描述"
+          bindinput="onFormInput"
+          data-field="detail"
+          maxlength="1000"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品状态卡片 -->
+  <view class="card">
+    <view class="card-header">
+      <text class="card-title">商品状态</text>
+    </view>
+    <view class="card-body">
+      <view class="status-section">
+        <view class="status-item">
+          <switch
+            checked="{{formData.isFeatured}}"
+            bindchange="onSwitchChange"
+            data-field="isFeatured"
+          />
+          <text class="status-label">设为推荐商品</text>
+        </view>
+
+        <view class="status-item">
+          <switch
+            checked="{{formData.isNew}}"
+            bindchange="onSwitchChange"
+            data-field="isNew"
+          />
+          <text class="status-label">设为新品</text>
+        </view>
+
+        <view class="status-item">
+          <picker
+            class="status-picker"
+            range="{{['草稿', '已上架']}}"
+            value="{{formData.status === 'published' ? 1 : 0}}"
+            bindchange="onStatusChange"
+          >
+            <view class="picker-display">
+              状态：{{formData.status === 'published' ? '已上架' : '草稿'}}
+            </view>
+          </picker>
+        </view>
+      </view>
+    </view>
+  </view>
 
   <!-- 提交按钮 -->
   <view class="submit-section">
-    <button 
-      class="weui-btn weui-btn_primary" 
+    <button
+      class="btn-primary btn-large"
       bindtap="onSubmit"
-      loading="{{submitting}}"
       disabled="{{submitting}}"
     >
       {{submitting ? '提交中...' : (isEdit ? '更新商品' : '创建商品')}}
     </button>
+  </view>
+
+  <!-- 新建分类模态框 -->
+  <view class="modal" wx:if="{{showCategoryModal}}">
+    <view class="modal-mask" bindtap="onCloseCategoryModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">创建新分类</text>
+        <text class="close-btn" bindtap="onCloseCategoryModal">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <view class="form-label">分类名称</view>
+          <input
+            class="form-input"
+            value="{{newCategory.name}}"
+            placeholder="请输入分类名称"
+            data-field="name"
+            bindinput="onNewCategoryInput"
+          />
+        </view>
+        <view class="form-group">
+          <view class="form-label">分类描述</view>
+          <input
+            class="form-input"
+            value="{{newCategory.description}}"
+            placeholder="请输入分类描述（可选）"
+            data-field="description"
+            bindinput="onNewCategoryInput"
+          />
+        </view>
+        <view class="modal-actions">
+          <button class="btn-secondary" bindtap="onCloseCategoryModal">取消</button>
+          <button class="btn-primary" bindtap="onSubmitNewCategory">创建</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- SKU编辑模态框 -->
+  <view class="modal" wx:if="{{showSkuModal}}">
+    <view class="modal-mask" bindtap="onCloseSkuModal"></view>
+    <view class="modal-content">
+      <view class="modal-header">
+        <text class="modal-title">{{isEditingSku ? '编辑规格' : '添加规格'}}</text>
+        <text class="close-btn" bindtap="onCloseSkuModal">×</text>
+      </view>
+      <view class="modal-body">
+        <view class="form-group">
+          <view class="form-label">规格名称</view>
+          <input
+            class="form-input"
+            value="{{currentSku.name}}"
+            placeholder="例如：红色、大号"
+            bindinput="onSkuInput"
+            data-field="name"
+          />
+        </view>
+        <view class="form-group">
+          <view class="form-label">价格</view>
+          <input
+            class="form-input"
+            type="number"
+            value="{{currentSku.price}}"
+            placeholder="0.00"
+            bindinput="onSkuInput"
+            data-field="price"
+          />
+        </view>
+        <view class="form-group">
+          <view class="form-label">库存</view>
+          <input
+            class="form-input"
+            type="number"
+            value="{{currentSku.stock}}"
+            placeholder="库存数量"
+            bindinput="onSkuInput"
+            data-field="stock"
+          />
+        </view>
+        <view class="modal-actions">
+          <button class="btn-secondary" bindtap="onCloseSkuModal">取消</button>
+          <button class="btn-primary" bindtap="onSaveSku">保存</button>
+        </view>
+      </view>
+    </view>
   </view>
 </view>

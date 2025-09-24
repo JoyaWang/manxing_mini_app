@@ -64,18 +64,24 @@ Page({
     if (loginType === 'admin' || isAdminAccount) {
       api.adminLogin(username, password)
         .then(response => {
+          console.log('Admin Login API Response in login.js:', JSON.stringify(response, null, 2)); // Detailed debug log
           wx.hideLoading();
 
-          if (response.success) {
+          if (response && typeof response.success === 'boolean' && response.success === true) {
+            console.log('Entering success block'); // Debug log
+
             // 存储认证令牌
             wx.setStorageSync('authToken', response.token);
 
-            // 设置用户信息
+            // 设置用户信息 - 修正为使用 response.admin
+            const adminData = response.admin || {};
             const userInfo = {
-              id: response.user.id,
-              username: response.user.nickName,
+              id: adminData.id || Date.now().toString(),
+              username: adminData.username || username,
               isAdmin: true
             };
+
+            console.log('Setting userInfo:', userInfo); // Debug log
 
             auth.setUser(userInfo);
 
@@ -84,6 +90,7 @@ Page({
               icon: 'success',
               duration: 1500,
               success: () => {
+                console.log('Showing success toast and navigating'); // Debug log
                 setTimeout(() => {
                   wx.reLaunch({
                     url: '/pages/admin/index'
@@ -92,13 +99,17 @@ Page({
               }
             });
           } else {
+            console.log('Login failed - response:', JSON.stringify(response, null, 2)); // Debug log for failure case
+            console.log('response.success value:', response ? (typeof response.success + ': ' + response.success) : 'no response');
+            console.log('response type:', typeof response);
             wx.showToast({
-              title: response.error || '登录失败',
+              title: response && response.error ? response.error : '登录失败',
               icon: 'none'
             });
           }
         })
         .catch(error => {
+          console.error('Admin Login Error in login.js:', error); // Enhanced error log
           wx.hideLoading();
           wx.showToast({
             title: error.error || '登录失败',

@@ -43,38 +43,55 @@ Page({
     this.setData({ scrollTop: e.scrollTop });
   },
 
-  // 加载首页板块配置
+  // 加载首页板块配置 - 只调用一次
   async loadHomeSectionsConfig() {
     try {
-      const config = await api.getHomeSectionsConfig();
-      let configObj = {};
-
-      // 处理不同格式的配置数据
-      if (Array.isArray(config)) {
-        // 数组格式：[{id: '0', enabled: true}, ...]
-        // 映射ID到板块名称
-        const sectionMap = {
-          "0": "banners",
-          "1": "categories",
-          "2": "featured",
-          "3": "new",
-          "4": "hot",
-          "5": "ads"
-        };
-        config.forEach(section => {
-          const sectionKey = sectionMap[section.id] || section.id;
-          configObj[sectionKey] = section.enabled;
-        });
-      } else if (typeof config === 'object') {
-        // 对象格式：{featured: true, hot: true, ...}
-        configObj = config;
+      const response = await api.getHomeSectionsConfig();
+      if (!response || !response.success) {
+        throw new Error('Invalid config response');
       }
 
-      this.setData({ homeSections: configObj });
+      const sections = response.config?.sections || [];
+      const configObj = {};
+      const sectionLimits = {};
+
+      sections.forEach(section => {
+        let key;
+        switch (section.type) {
+          case 'banner':
+            key = 'banners';
+            break;
+          case 'categories':
+            key = 'categories';
+            break;
+          case 'products':
+            key = 'featured';
+            sectionLimits.featured = section.limit || 6;
+            break;
+          case 'new':
+            key = 'new';
+            break;
+          case 'hot':
+            key = 'hot';
+            break;
+          default:
+            key = section.type;
+        }
+        configObj[key] = true;
+      });
+
+      this.setData({
+        homeSections: configObj,
+        sectionLimits: sectionLimits
+      });
+      console.log('Home sections config loaded:', configObj, sectionLimits);
     } catch (error) {
       console.error('加载首页配置失败:', error);
-      // 失败时使用默认配置
-      this.setData({ homeSections: this.data.homeSections });
+      // 默认配置
+      this.setData({
+        homeSections: { banners: true, categories: true, featured: true, new: true, hot: true },
+        sectionLimits: { featured: 6 }
+      });
     }
   },
 
@@ -82,21 +99,20 @@ Page({
     this.setData({ loading: true });
 
     try {
-      // 先加载首页配置
-      await this.loadHomeSectionsConfig();
-      // 根据配置决定加载哪些数据
+      // 使用已加载的配置，不重新调用API
       const loadTasks = [];
-      
+
       if (this.data.homeSections.banners) {
         loadTasks.push(this.getBanners());
       }
-      
+
       if (this.data.homeSections.categories) {
         loadTasks.push(this.getCategories());
       }
-      
+
       if (this.data.homeSections.featured) {
-        loadTasks.push(this.getFeaturedProducts());
+        const limit = this.data.sectionLimits?.featured || 6;
+        loadTasks.push(this.getFeaturedProducts(limit));
       }
 
       if (this.data.homeSections.new) {
@@ -107,30 +123,35 @@ Page({
         loadTasks.push(this.getHotProducts());
       }
 
+      if (loadTasks.length === 0) {
+        this.setData({ loading: false });
+        return;
+      }
+
       const results = await Promise.all(loadTasks);
-      
+
       // 根据配置设置数据
       const data = {};
       let resultIndex = 0;
-      
+
       if (this.data.homeSections.banners) {
-        data.banners = results[resultIndex++];
+        data.banners = results[resultIndex++] || [];
       }
-      
+
       if (this.data.homeSections.categories) {
-        data.categories = results[resultIndex++];
+        data.categories = results[resultIndex++] || [];
       }
-      
+
       if (this.data.homeSections.featured) {
-        data.featuredProducts = results[resultIndex++];
+        data.featuredProducts = results[resultIndex++] || [];
       }
 
       if (this.data.homeSections.new) {
-        data.newProducts = results[resultIndex++];
+        data.newProducts = results[resultIndex++] || [];
       }
 
       if (this.data.homeSections.hot) {
-        data.hotProducts = results[resultIndex++];
+        data.hotProducts = results[resultIndex++] || [];
       }
 
       this.setData({
@@ -167,32 +188,46 @@ Page({
 
   async getCategories() {
     try {
-      const categories = await api.getCategories();
-      return categories.slice(0, 8); // 只显示前8个分类
+      const response = await api.getCategories();
+      console.log('Categories loaded:', response.length || 0);
+      return (response || []).slice(0, 8);
     } catch (error) {
       console.error('获取分类失败:', error);
-      return [];
+      // Fallback mock categories
+      return [
+        { id: 1, name: '手机数码', icon: '📱' },
+        { id: 2, name: '服装鞋帽', icon: '👕' },
+        { id: 3, name: '家用电器', icon: '🧴' },
+        { id: 4, name: '电脑办公', icon: '💻' },
+        { id: 5, name: '家居生活', icon: '🏠' },
+        { id: 6, name: '母婴用品', icon: '👶' },
+        { id: 7, name: '图书音像', icon: '📚' },
+        { id: 8, name: '美食饮品', icon: '🍔' }
+      ];
     }
   },
 
-  async getFeaturedProducts() {
+  async getFeaturedProducts(limit = 6) {
     try {
-          const response = await api.getProducts({
-            is_featured: true,
-            limit: 6
-          });
-          return response.products || [];
+      const response = await api.getProducts({
+        is_featured: true,
+        limit: limit
+      });
+      console.log('Featured products loaded:', response.products?.length || 0);
+      return response.products || [];
     } catch (error) {
       console.error('获取推荐商品失败:', error);
       return [];
     }
   },
 
-  async getNewProducts() {
+  async getNewProducts(limit = 6) {
     try {
       const response = await api.getProducts({
-        isNew: true,
-        limit: 6
+        is_new: true,
+        limit: limit,
+        sort: 'created_at',
+        order: 'desc'
       });
       return response.products || [];
     } catch (error) {
@@ -201,17 +236,45 @@ Page({
     }
   },
 
-  async getHotProducts() {
+  async getHotProducts(limit = 6) {
     try {
       const response = await api.getProducts({
-        sort: 'sales',
+        sort: 'sales_count',
         order: 'desc',
-        limit: 6
+        limit: limit
       });
       return response.products || [];
     } catch (error) {
       console.error('获取热卖商品失败:', error);
       return [];
+    }
+  },
+
+  async getBanners() {
+    try {
+      const response = await api.getBanners();
+      console.log('Banners loaded:', response.length || 0);
+      return response || [];
+    } catch (error) {
+      console.error('获取轮播图失败:', error);
+      // Fallback to mock data
+      return [
+        {
+          id: 1,
+          image: 'https://via.placeholder.com/750x300/ff6b35/ffffff?text=轮播图1',
+          link: '/pages/product/list?type=hot'
+        },
+        {
+          id: 2,
+          image: 'https://via.placeholder.com/750x300/4ecdc4/ffffff?text=轮播图2',
+          link: '/pages/product/list?type=new'
+        },
+        {
+          id: 3,
+          image: 'https://via.placeholder.com/750x300/45b7d1/ffffff?text=轮播图3',
+          link: '/pages/product/list?type=discount'
+        }
+      ];
     }
   },
 

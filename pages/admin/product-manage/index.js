@@ -74,9 +74,13 @@ Page({
       };
 
       const response = await api.getProducts(params);
+      const mappedProducts = (response?.products || []).map(product => ({
+        ...product,
+        id: product._id
+      }));
       this.setData({
-        products: response?.products || [],
-        totalPages: response?.totalPages || 1,
+        products: mappedProducts,
+        totalPages: response?.pagination?.pages || response?.totalPages || 1,
         loading: false
       });
     } catch (error) {
@@ -126,7 +130,7 @@ Page({
   // 上下架商品
   async onToggleProductStatus(e) {
     const productId = e.currentTarget.dataset.id;
-    const product = this.data.products.find(p => p.id === productId);
+    const product = this.data.products.find(p => p._id === productId);
     const newStatus = product.status === 'published' ? 'draft' : 'published';
 
     try {

@@ -1,98 +1,242 @@
-/* pages/admin/product-edit/index.wxss */
+/* 页面容器 - 更紧凑 */
 .container {
-  padding: 20rpx;
   min-height: 100vh;
-  background: #f7f8fa;
+  background-color: #f5f5f5;
+  padding: 10rpx;
 }
 
-.header {
+/* 页面标题 - 更紧凑 */
+.page-header {
+  margin-bottom: 20rpx;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30rpx;
-  padding: 20rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
 }
 
-.title {
-  font-size: 36rpx;
-  font-weight: 600;
-  color: #333;
-}
-
-.form-content {
-  height: calc(100vh - 200rpx);
-  margin-bottom: 120rpx;
-}
-
-.form-section {
-  margin-bottom: 30rpx;
-  background: #fff;
-  border-radius: 16rpx;
-  overflow: hidden;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
-}
-
-.section-title {
-  padding: 30rpx;
+.page-title {
   font-size: 32rpx;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+/* 返回按钮样式 */
+.btn-back {
+  background: #f7fafc;
+  color: #007aff;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 12rpx 20rpx;
+  font-size: 26rpx;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.back-icon {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+
+/* 卡片样式 - 更紧凑 */
+.card {
+  background: white;
+  border-radius: 12rpx;
+  margin-bottom: 15rpx;
+  box-shadow: 0 1rpx 8rpx rgba(0, 0, 0, 0.06);
+}
+
+.card-header {
+  padding: 20rpx 25rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-title {
+  font-size: 28rpx;
   font-weight: 600;
-  color: #333;
-  border-bottom: 2rpx solid #f0f0f0;
+  color: #2d3748; /* 深灰色标题 */
 }
 
-.images-section {
-  padding: 30rpx;
+.card-body {
+  padding: 20rpx 25rpx;
 }
 
-.upload-btn {
+/* 表单组 - 更紧凑 */
+.form-group {
+  margin-bottom: 20rpx;
+}
+
+.form-label {
+  font-size: 26rpx;
+  color: #4a5568; /* 中灰色标签 */
+  margin-bottom: 8rpx;
+  font-weight: 500;
+}
+
+.form-input {
+  width: 100%;
+  height: 70rpx;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 0 16rpx;
+  font-size: 26rpx;
+  background: #fff;
+}
+
+.form-input:focus {
+  border-color: #007aff;
+}
+
+.form-textarea {
+  width: 100%;
+  min-height: 100rpx;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 16rpx;
+  font-size: 26rpx;
+  background: #fff;
+}
+
+.form-textarea.large {
+  min-height: 150rpx;
+}
+
+/* 分类选择区域 - 更紧凑 */
+.category-section {
+  display: flex;
+  gap: 15rpx;
+  align-items: center;
+}
+
+.category-picker {
+  flex: 1;
+}
+
+.picker-display {
+  height: 70rpx;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  background: #fff;
+  color: #4a5568;
+}
+
+/* 价格行 - 更紧凑 */
+.price-row {
+  display: flex;
+  gap: 15rpx;
+}
+
+.half-width {
+  flex: 1;
+}
+
+/* 按钮样式 - 更紧凑 */
+.btn-primary {
+  background: #007aff;
+  color: white;
+  border: none;
+  border-radius: 6rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.btn-primary:disabled {
+  background: #ccc;
+}
+
+.btn-secondary {
+  background: #f7fafc;
+  color: #4a5568;
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 12rpx 24rpx;
+  font-size: 26rpx;
+}
+
+.btn-small {
+  padding: 8rpx 16rpx;
+  font-size: 22rpx;
+}
+
+.btn-large {
+  width: 100%;
+  height: 80rpx;
+  font-size: 28rpx;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: #007aff;
+  font-size: 22rpx;
+  padding: 6rpx 12rpx;
+}
+
+.btn-danger {
+  color: #e53e3e;
+}
+
+/* 图片上传区域 - 更紧凑 */
+.image-upload-section {
   display: flex;
   flex-direction: column;
+  gap: 20rpx;
+}
+
+.main-image-section {
+  margin-bottom: 15rpx;
+}
+
+.image-uploader {
+  width: 180rpx;
+  height: 180rpx;
+  border: 2rpx dashed #e2e8f0;
+  border-radius: 6rpx;
+  display: flex;
   align-items: center;
   justify-content: center;
-  height: 200rpx;
-  border: 2rpx dashed #ccc;
-  border-radius: 12rpx;
-  color: #999;
-  background: #fafafa;
-  margin-bottom: 30rpx;
+  background: #f7fafc;
 }
 
-.upload-btn:active {
-  background: #f0f0f0;
+.upload-placeholder {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 22rpx;
 }
 
-.upload-tip {
-  font-size: 24rpx;
-  margin-top: 10rpx;
-  color: #999;
+.preview-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 4rpx;
 }
 
-.image-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20rpx;
+.gallery-section {
+  margin-top: 15rpx;
+}
+
+.image-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15rpx;
 }
 
 .image-item {
   position: relative;
-  height: 200rpx;
-  border-radius: 12rpx;
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 6rpx;
   overflow: hidden;
-  border: 2rpx solid #f0f0f0;
 }
 
-.image-item.main-image {
-  border-color: #07c160;
-  border-width: 4rpx;
-}
-
-.image-item image {
+.gallery-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
 
 .image-actions {
@@ -101,146 +245,235 @@
   left: 0;
   right: 0;
   background: rgba(0, 0, 0, 0.7);
+  padding: 6rpx;
   display: flex;
-  padding: 10rpx;
+  justify-content: center;
 }
 
-.action-btn {
-  flex: 1;
+.add-image-btn {
+  width: 100rpx;
+  height: 100rpx;
+  border: 2rpx dashed #e2e8f0;
+  border-radius: 6rpx;
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #fff;
-  font-size: 20rpx;
-  padding: 8rpx;
+  justify-content: center;
+  color: #a0aec0;
+  font-size: 22rpx;
+  background: #f7fafc;
 }
 
-.action-btn.active {
-  color: #07c160;
+/* SKU管理 - 更紧凑，修复标题换行问题 */
+.sku-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15rpx;
 }
 
-.action-btn.delete {
-  color: #ff4444;
+.sku-item {
+  border: 1rpx solid #e2e8f0;
+  border-radius: 6rpx;
+  padding: 15rpx;
+  background: #f7fafc;
 }
 
-.action-btn .van-icon {
-  margin-bottom: 4rpx;
-}
-
-.main-badge {
-  position: absolute;
-  top: 10rpx;
-  right: 10rpx;
-  background: #07c160;
-  color: #fff;
-  font-size: 20rpx;
-  padding: 4rpx 12rpx;
-  border-radius: 20rpx;
-}
-
-.upload-progress {
-  margin-top: 20rpx;
-  text-align: center;
-  color: #666;
-  font-size: 24rpx;
-}
-
-.upload-progress .van-progress {
+.sku-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10rpx;
 }
 
-.submit-section {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 20rpx;
-  background: #fff;
-  border-top: 2rpx solid #f0f0f0;
-  z-index: 100;
+.sku-name {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #2d3748;
+  white-space: nowrap; /* 防止换行 */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* 表单字段样式 */
-.van-field__label {
+.sku-actions {
+  display: flex;
+  gap: 8rpx;
+  flex-shrink: 0; /* 防止按钮被压缩 */
+}
+
+.sku-details {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+}
+
+.sku-detail-item {
+  display: flex;
+  gap: 8rpx;
+  align-items: center;
+}
+
+.detail-label {
+  color: #718096;
+  font-size: 22rpx;
+  white-space: nowrap;
+}
+
+.detail-value {
+  color: #4a5568;
+  font-size: 22rpx;
   font-weight: 500;
 }
 
-.van-cell-group {
-  margin: 0;
-}
-
-.van-cell {
+.no-skus {
+  text-align: center;
+  color: #a0aec0;
+  font-size: 26rpx;
   padding: 30rpx;
 }
 
-.van-cell::after {
-  border-bottom: 2rpx solid #f0f0f0;
-}
-
-.van-cell:last-child::after {
-  border-bottom: none;
-}
-
-/* 单选按钮样式 */
-.van-radio-group {
-  width: 100%;
-}
-
-.van-radio {
-  padding: 30rpx;
-}
-
-.van-radio::after {
-  border-bottom: 2rpx solid #f0f0f0;
-}
-
-.van-radio:last-child::after {
-  border-bottom: none;
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .image-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .header {
-    flex-direction: column;
-    gap: 20rpx;
-    text-align: center;
-  }
-}
-
-/* 加载状态 */
-.loading-container {
+/* 状态区域 - 更紧凑 */
+.status-section {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  gap: 15rpx;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
   align-items: center;
-  height: 300rpx;
+  padding: 12rpx 0;
 }
 
-/* 错误状态 */
-.error-message {
-  text-align: center;
-  padding: 60rpx 30rpx;
-  color: #ff4444;
+.status-label {
+  font-size: 26rpx;
+  color: #4a5568;
+}
+
+.status-picker {
+  flex: 1;
+}
+
+/* 提交区域 - 更紧凑 */
+.submit-section {
+  margin-top: 30rpx;
+  margin-bottom: 30rpx;
+}
+
+/* 模态框样式 - 更紧凑 */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-mask {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  position: relative;
+  background: white;
+  border-radius: 12rpx;
+  width: 80%;
+  max-width: 550rpx;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 25rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
   font-size: 28rpx;
+  font-weight: 600;
+  color: #2d3748;
 }
 
-.error-message .van-icon {
-  font-size: 80rpx;
-  margin-bottom: 20rpx;
+.close-btn {
+  font-size: 36rpx;
+  color: #a0aec0;
+  cursor: pointer;
 }
 
-/* 成功状态 */
-.success-message {
-  text-align: center;
-  padding: 60rpx 30rpx;
-  color: #07c160;
-  font-size: 28rpx;
+.modal-body {
+  padding: 25rpx;
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
-.success-message .van-icon {
-  font-size: 80rpx;
-  margin-bottom: 20rpx;
+.modal-actions {
+  display: flex;
+  gap: 15rpx;
+  margin-top: 25rpx;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+/* 响应式调整 */
+@media (max-width: 750rpx) {
+  .container {
+    padding: 8rpx;
+  }
+
+  .card-body {
+    padding: 15rpx 20rpx;
+  }
+
+  .price-row {
+    flex-direction: column;
+    gap: 12rpx;
+  }
+
+  .category-section {
+    flex-direction: column;
+    gap: 12rpx;
+  }
+
+  .modal-content {
+    width: 85%;
+  }
+}
+
+/* 标题颜色层次区分 */
+.page-title {
+  color: #1a1a1a; /* 最深的黑色，用于页面标题 */
+}
+
+.card-title {
+  color: #2d3748; /* 深灰色，用于卡片标题 */
+}
+
+.form-label {
+  color: #4a5568; /* 中灰色，用于表单标签 */
+}
+
+.sku-name {
+  color: #2d3748; /* 深灰色，用于SKU标题 */
+}
+
+.detail-label {
+  color: #718096; /* 浅灰色，用于详情标签 */
+}
+
+.status-label {
+  color: #4a5568; /* 中灰色，用于状态标签 */
 }

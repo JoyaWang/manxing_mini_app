@@ -64,37 +64,56 @@
   font-weight: 500;
 }
 
-/* 数据概览 */
+/* 数据概览 - 紧凑3x2网格 */
 .stats-section {
-  margin-bottom: 30rpx;
+  margin-bottom: 20rpx;
 }
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20rpx;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12rpx;
+  max-width: 100%;
 }
 
 .stat-card {
-  background: white;
-  padding: 30rpx;
-  border-radius: 16rpx;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  padding: 16rpx 12rpx;
+  border-radius: 10rpx;
   text-align: center;
-  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.06);
+  border: 1rpx solid #f0f0f0;
+  transition: all 0.3s ease;
+  min-height: 80rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stat-card:active {
+  transform: scale(0.98);
+  box-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.06);
+}
+
+.stat-icon {
+  font-size: 28rpx;
+  margin-bottom: 4rpx;
+  display: block;
 }
 
 .stat-number {
-  font-size: 36rpx;
+  font-size: 28rpx;
   font-weight: bold;
-  color: #333;
+  color: #2d3748;
   display: block;
+  margin-bottom: 2rpx;
 }
 
 .stat-label {
-  font-size: 24rpx;
-  color: #666;
+  font-size: 20rpx;
+  color: #718096;
   display: block;
-  margin-top: 8rpx;
+  font-weight: 500;
 }
 
 /* 紧凑网格布局 */

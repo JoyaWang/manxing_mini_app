@@ -282,7 +282,116 @@ class ApiClient {
   }
 
   async getProductDetail(id) {
-    return this.request(`/products/${id}`);
+    const response = await this.request(`/products/${id}`);
+    console.log('[API GET PRODUCT DETAIL] Raw response:', response);
+
+    if (response && response.success && response.product) {
+      const product = response.product;
+
+      // Standardize ID
+      product.id = product._id || product.id;
+
+      // Handle cloud images if needed
+      if (this.backendType === 'tencent') {
+        const defaultImage = 'https://via.placeholder.com/300x300/cccccc/666666?text=No+Image';
+
+        // Handle main_image
+        let mainImagePath = product.main_image;
+        if (mainImagePath && typeof mainImagePath === 'string' && !mainImagePath.startsWith('http')) {
+          try {
+            const urlRes = await new Promise((resolve, reject) => {
+              wx.cloud.getTempFileURL({
+                fileList: [mainImagePath],
+                success: resolve,
+                fail: reject
+              });
+            });
+            if (urlRes.fileList && urlRes.fileList[0]) {
+              mainImagePath = urlRes.fileList[0].tempFileURL;
+            }
+          } catch (err) {
+            console.error('Failed to get temp URL for main image:', err);
+            mainImagePath = defaultImage;
+          }
+        } else if (!mainImagePath) {
+          mainImagePath = defaultImage;
+        }
+
+        // Handle images array
+        let parsedImages = [];
+        if (product.images) {
+          if (typeof product.images === 'string') {
+            try {
+              parsedImages = JSON.parse(product.images);
+            } catch (e) {
+              parsedImages = [];
+            }
+          } else if (Array.isArray(product.images)) {
+            parsedImages = product.images;
+          }
+        }
+
+        // Get temp URLs for images
+        const allFileIDs = parsedImages.filter(img => typeof img === 'string' && !img.startsWith('http'));
+        if (allFileIDs.length > 0) {
+          try {
+            const urlRes = await new Promise((resolve, reject) => {
+              wx.cloud.getTempFileURL({
+                fileList: allFileIDs,
+                success: resolve,
+                fail: reject
+              });
+            });
+            const urlMap = {};
+            urlRes.fileList.forEach(item => {
+              urlMap[item.fileID] = item.tempFileURL;
+            });
+            parsedImages = parsedImages.map(img => {
+              const imgStr = (img || '').toString().trim();
+              if (imgStr && !imgStr.startsWith('http')) {
+                return urlMap[imgStr] || imgStr;
+              }
+              return imgStr;
+            }).filter(Boolean);
+          } catch (err) {
+            console.error('Failed to get temp URLs for images:', err);
+          }
+        }
+
+        // Fallback to first image if no main
+        if (!mainImagePath && parsedImages.length > 0) {
+          mainImagePath = parsedImages[0];
+        }
+
+        return {
+          ...product,
+          id: product.id,
+          originalPrice: product.original_price || null,
+          isFeatured: Boolean(product.is_featured),
+          isNew: Boolean(product.is_new),
+          categoryId: product.category_id || '',
+          image: mainImagePath || defaultImage,
+          images: parsedImages,
+          sales: product.sales_count || 0
+        };
+      } else {
+        // Non-cloud mapping
+        return {
+          ...product,
+          id: product._id || product.id,
+          originalPrice: product.original_price || null,
+          isFeatured: Boolean(product.is_featured),
+          isNew: Boolean(product.is_new),
+          categoryId: product.category_id || '',
+          image: product.main_image || product.image || defaultImage,
+          images: Array.isArray(product.images) ? product.images : [],
+          sales: product.sales_count || 0
+        };
+      }
+    } else {
+      console.error('[API GET PRODUCT DETAIL] Invalid response:', response);
+      throw new Error(response?.error || '商品不存在');
+    }
   }
 
   async createProduct(productData) {
@@ -315,6 +424,13 @@ class ApiClient {
 
   async getCategories() {
     return this.request('/categories');
+  }
+
+  async createCategory(categoryData) {
+    return this.request('/categories', {
+      method: 'POST',
+      data: categoryData
+    });
   }
 
   // 轮播图相关API
@@ -517,7 +633,7 @@ class ApiClient {
 
   // 管理员登录
   async adminLogin(username, password) {
-    return this.request('/auth/admin-login', {
+    return this.request('/admin/login', {
       method: 'POST',
       data: { username, password }
     });

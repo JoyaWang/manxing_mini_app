@@ -56,15 +56,15 @@
         </view>
 
         <view class="product-actions">
-          <button class="btn-edit" bindtap="onEditProduct" data-id="{{item.id}}">编辑</button>
+          <button class="btn-edit" bindtap="onEditProduct" data-id="{{item._id}}">编辑</button>
           <button 
             class="btn-status {{item.status === 'published' ? 'btn-unpublish' : 'btn-publish'}}" 
             bindtap="onToggleProductStatus" 
-            data-id="{{item.id}}"
+            data-id="{{item._id}}"
           >
             {{item.status === 'published' ? '下架' : '上架'}}
           </button>
-          <button class="btn-delete" bindtap="onDeleteProduct" data-id="{{item.id}}">删除</button>
+          <button class="btn-delete" bindtap="onDeleteProduct" data-id="{{item._id}}">删除</button>
         </view>
       </view>
     </block>

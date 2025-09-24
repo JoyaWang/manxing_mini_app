@@ -1,0 +1,52 @@
+&lt;view class="container"&gt;
+  &lt;view class="header"&gt;
+    &lt;text class="title"&gt;管理员登录&lt;/text&gt;
+    &lt;text class="subtitle"&gt;欢迎登录商城管理后台&lt;/text&gt;
+  &lt;/view&gt;
+
+  &lt;view class="form-container"&gt;
+    &lt;view class="input-group"&gt;
+      &lt;view class="input-wrapper"&gt;
+        &lt;input
+          placeholder="请输入用户名"
+          placeholder-class="placeholder"
+          bindinput="onUsernameInput"
+          value="{{username}}"
+          class="input"
+          type="text"
+          maxlength="20"
+        /&gt;
+        &lt;image src="/images/user-icon.png" class="input-icon" /&gt;
+      &lt;/view&gt;
+    &lt;/view&gt;
+
+    &lt;view class="input-group"&gt;
+      &lt;view class="input-wrapper"&gt;
+        &lt;input
+          placeholder="请输入密码"
+          placeholder-class="placeholder"
+          bindinput="onPasswordInput"
+          value="{{password}}"
+          class="input"
+          type="password"
+          password="true"
+          maxlength="20"
+        /&gt;
+        &lt;image src="/images/lock-icon.png" class="input-icon" /&gt;
+      &lt;/view&gt;
+    &lt;/view&gt;
+
+    &lt;view class="login-btn" bindtap="onLogin"&gt;
+      &lt;text&gt;登录&lt;/text&gt;
+    &lt;/view&gt;
+
+    &lt;view class="loading" wx:if="{{loading}}"&gt;
+      &lt;loading /&gt;
+    &lt;/view&gt;
+  &lt;/view&gt;
+
+  &lt;view class="footer"&gt;
+    &lt;text&gt;默认账号：admin / 密码：admin123&lt;/text&gt;
+  &lt;/view&gt;
+&lt;/view&gt;
+

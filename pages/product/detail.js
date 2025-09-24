@@ -101,15 +101,32 @@ Page({
 
   // 添加到购物车
   async onAddToCart() {
+    // Check login status
+    const user = wx.getStorageSync('user');
+    if (!user || !user.id) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({
+              url: '/pages/user/login'
+            });
+          }
+        }
+      });
+      return;
+    }
+  
     if (!this.data.selectedSku) {
       util.showError('请选择商品规格');
       return;
     }
-
+  
     util.showLoading('添加中...');
-    
+  
     try {
-      await api.addToCart(this.data.selectedSku.id, this.data.quantity);
+      await api.addToCart(this.data.product._id, this.data.quantity, this.data.selectedSku.id);
       util.showSuccess('添加成功');
       this.getCartCount();
       this.onCloseSkuPicker();
@@ -123,17 +140,34 @@ Page({
 
   // 立即购买
   async onBuyNow() {
+    // Check login status
+    const user = wx.getStorageSync('user');
+    if (!user || !user.id) {
+      wx.showModal({
+        title: '提示',
+        content: '请先登录',
+        success: (res) => {
+          if (res.confirm) {
+            wx.navigateTo({
+              url: '/pages/user/login'
+            });
+          }
+        }
+      });
+      return;
+    }
+  
     if (!this.data.selectedSku) {
       util.showError('请选择商品规格');
       return;
     }
-
+  
     util.showLoading('处理中...');
-    
+  
     try {
       // 先添加到购物车
-      await api.addToCart(this.data.selectedSku.id, this.data.quantity);
-      
+      await api.addToCart(this.data.product._id, this.data.quantity, this.data.selectedSku.id);
+  
       // 跳转到订单确认页面
       wx.navigateTo({
         url: '/pages/order/confirm'

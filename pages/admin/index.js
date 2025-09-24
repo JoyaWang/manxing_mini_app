@@ -64,21 +64,39 @@ Page({
   async loadStats() {
     try {
       const productsResponse = await api.getProducts({ limit: 100 });
-      const ordersResponse = await api.getOrders({ limit: 100 });
+      let ordersResponse;
+      try {
+        ordersResponse = await api.getOrders({ limit: 100 });
+      } catch (ordersError) {
+        console.warn('获取订单数据失败，使用空数组:', ordersError);
+        ordersResponse = { success: true, orders: [] };  // Fallback with success true
+      }
 
       // 处理新的API响应格式（包含分页元数据）
       const products = productsResponse.products || productsResponse || [];
-      const orders = ordersResponse.orders || ordersResponse || [];
+      let ordersData = ordersResponse.orders || ordersResponse.data || ordersResponse || [];  // Use let, enhanced fallback
 
-      const totalRevenue = orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
-      
+      // Ensure ordersData is always an array
+      if (!Array.isArray(ordersData)) {
+        console.warn('Orders data is not an array, setting to empty array:', typeof ordersData, ordersData);
+        ordersData = [];
+      }
+
+      const totalRevenue = ordersData.reduce((sum, order) => sum + (order.totalAmount || order.total_amount || 0), 0);
+
       this.setData({
         'stats.products': products.length,
-        'stats.orders': orders.length,
+        'stats.orders': ordersData.length,
         'stats.revenue': totalRevenue.toFixed(2)
       });
     } catch (error) {
       console.error('加载统计数据失败:', error);
+      // Set default stats on error
+      this.setData({
+        'stats.products': 0,
+        'stats.orders': 0,
+        'stats.revenue': '0.00'
+      });
       util.showError('加载数据失败');
     }
   },
