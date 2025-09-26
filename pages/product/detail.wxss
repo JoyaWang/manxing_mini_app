@@ -87,6 +87,17 @@
   font-size: 24rpx;
 }
 
+/* 商品简介样式 */
+.product-description {
+  margin-bottom: 20rpx;
+}
+
+.description-text {
+  font-size: 28rpx;
+  color: #666;
+  line-height: 1.5;
+}
+
 /* SKU选择 */
 .sku-section {
   display: flex;

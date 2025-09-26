@@ -73,27 +73,17 @@ Page({
   },
 
   // 加载分类
-  loadCategories() {
-    api.getCategories().then(categories => {
+  async loadCategories() {
+    try {
+      const categories = await api.getCategories();
       console.log('[CATEGORIES API] Raw response:', categories);
       console.log('[CATEGORIES API] Categories data:', categories.categories);
-      
-      // 确保数据格式正确，处理各种API响应格式
-      let categoriesData = [];
-      if (categories && Array.isArray(categories.categories)) {
-        categoriesData = categories.categories;
-      } else if (Array.isArray(categories)) {
-        categoriesData = categories;
-      }
-      
-      this.setData({ categories: categoriesData });
+      this.setData({ categories: categories.categories || [] });
       console.log('[CATEGORIES API] After setData:', this.data.categories);
-    }).catch(error => {
+    } catch (error) {
       console.error('加载分类失败:', error);
-      // 使用默认空数组，确保页面不会空白
-      this.setData({ categories: [] });
-      util.showError('加载分类失败，请检查网络连接');
-    });
+      util.showError('加载分类失败');
+    }
   },
 
   // 打开创建新分类模态框
@@ -115,17 +105,18 @@ Page({
   },
 
   // 提交新分类
-  onSubmitNewCategory() {
+  async onSubmitNewCategory() {
     const { name, description } = this.data.newCategory;
     if (!name.trim()) {
       util.showError('分类名称不能为空');
       return;
     }
 
-    api.createCategory({ name, description }).then(result => {
+    try {
+      const result = await api.createCategory({ name, description });
       if (result.success) {
         // 刷新分类列表
-        this.loadCategories();
+        await this.loadCategories();
 
         // 自动选择新分类
         const newCatIndex = this.data.categories.findIndex(cat => cat.id === result.category.id);
@@ -141,10 +132,10 @@ Page({
       } else {
         util.showError('创建分类失败');
       }
-    }).catch(error => {
+    } catch (error) {
       console.error('创建分类错误:', error);
       util.showError('创建分类失败');
-    });
+    }
   },
 
   // 关闭模态框
@@ -153,10 +144,11 @@ Page({
   },
 
   // 加载商品详情
-  loadProductDetail(id) {
+  async loadProductDetail(id) {
     this.setData({ loading: true });
 
-    api.getProductDetail(id).then(product => {
+    try {
+      const product = await api.getProductDetail(id);
       this.setData({
         'formData.name': product.name,
         'formData.price': product.price,
@@ -180,12 +172,12 @@ Page({
           this.setData({ categoryIndex: catIndex });
         }
       }
-    }).catch(error => {
+    } catch (error) {
       console.error('加载商品详情失败:', error);
       util.showError('加载商品详情失败');
-    }).finally(() => {
+    } finally {
       this.setData({ loading: false });
-    });
+    }
   },
 
   // 表单输入处理（处理所有表单输入）
@@ -198,17 +190,18 @@ Page({
   },
 
   // 主图上传
-  onUploadMainImage() {
+  async onUploadMainImage() {
     console.log('[FRONTEND] 开始选择主图...');
-    console.log('[DEBUG] 当前 formData.mainImage 值:', this.data.formData.mainImage);
     this.setData({ uploading: true, uploadProgress: 0 });
 
-    wx.chooseMedia({
-      count: 1,
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      sizeType: ['compressed']
-    }).then(res => {
+    try {
+      const res = await wx.chooseMedia({
+        count: 1,
+        mediaType: ['image'],
+        sourceType: ['album', 'camera'],
+        sizeType: ['compressed']
+      });
+
       console.log('[FRONTEND] 主图选择完成:', res.tempFiles);
       if (res.tempFiles && res.tempFiles.length > 0) {
         const file = res.tempFiles[0];
@@ -216,40 +209,32 @@ Page({
         this.setData({ uploadProgress: 30 });
 
         // 模拟上传过程
-        return new Promise(resolve => setTimeout(resolve, 500)).then(() => {
-          this.setData({ uploadProgress: 70 });
+        await new Promise(resolve => setTimeout(resolve, 500));
+        this.setData({ uploadProgress: 70 });
 
-          // 调用API上传图片
-          console.log('[FRONTEND] 调用 uploadImage API for main image, filePath:', file.tempFilePath);
-          return api.uploadImage(file.tempFilePath);
-        }).then(uploadRes => {
-          console.log('[FRONTEND] 主图上传响应:', uploadRes);
-          console.log('[DEBUG] uploadRes 结构:', JSON.stringify(uploadRes, null, 2));
+        // 调用API上传图片
+        console.log('[FRONTEND] 调用 uploadImage API for main image, filePath:', file.tempFilePath);
+        const uploadRes = await api.uploadImage(file.tempFilePath);
 
-          if (uploadRes.file && uploadRes.file.url) {
-            const imageUrl = uploadRes.file.url;
-            console.log('[DEBUG] 设置主图URL:', imageUrl);
-            this.setData({
-              'formData.mainImage': imageUrl,
-              uploadProgress: 100
-            });
-            // 立即检查设置后的值
-            setTimeout(() => {
-              console.log('[DEBUG] 设置后 formData.mainImage 值:', this.data.formData.mainImage);
-            }, 100);
-            util.showSuccess('主图上传成功');
-          } else {
-            console.error('[FRONTEND] 主图上传响应格式错误:', uploadRes);
-            util.showError('主图上传失败');
-          }
-        });
+        console.log('[FRONTEND] 主图上传响应:', uploadRes);
+
+        if (uploadRes.file && uploadRes.file.url) {
+          this.setData({
+            'formData.mainImage': uploadRes.file.url,
+            uploadProgress: 100
+          });
+          util.showSuccess('主图上传成功');
+        } else {
+          console.error('[FRONTEND] 主图上传响应格式错误:', uploadRes);
+          util.showError('主图上传失败');
+        }
       }
-    }).catch(error => {
+    } catch (error) {
       console.error('[FRONTEND] 主图上传失败:', error);
       util.showError('主图上传失败');
-    }).finally(() => {
+    } finally {
       this.setData({ uploading: false, uploadProgress: 0 });
-    });
+    }
   },
 
   // SKU输入处理
@@ -281,59 +266,56 @@ Page({
   },
 
   // 上传商品图集图片
-  onUploadImage() {
+  async onUploadImage() {
     console.log('[FRONTEND] 开始选择商品图集图片...');
     this.setData({ uploading: true, uploadProgress: 0 });
 
-    wx.chooseMedia({
-      count: 9, // 最多选择9张图片
-      mediaType: ['image'],
-      sourceType: ['album', 'camera'],
-      sizeType: ['compressed']
-    }).then(res => {
+    try {
+      const res = await wx.chooseMedia({
+        count: 9, // 最多选择9张图片
+        mediaType: ['image'],
+        sourceType: ['album', 'camera'],
+        sizeType: ['compressed']
+      });
+
       console.log('[FRONTEND] 商品图集图片选择完成:', res.tempFiles);
       if (res.tempFiles && res.tempFiles.length > 0) {
         const images = [...this.data.formData.images];
-        const uploadPromises = [];
 
         for (const file of res.tempFiles) {
           console.log('[FRONTEND] 准备上传商品图集图片:', file.tempFilePath, file.size);
           this.setData({ uploadProgress: 30 });
 
           // 模拟上传过程
-          const uploadPromise = new Promise(resolve => setTimeout(resolve, 500)).then(() => {
-            this.setData({ uploadProgress: 70 });
+          await new Promise(resolve => setTimeout(resolve, 500));
+          this.setData({ uploadProgress: 70 });
 
-            // 调用API上传图片
-            console.log('[FRONTEND] 调用 uploadImage API for gallery image, filePath:', file.tempFilePath);
-            return api.uploadImage(file.tempFilePath);
-          }).then(uploadRes => {
-            console.log('[FRONTEND] 商品图集图片上传响应:', uploadRes);
+          // 调用API上传图片
+          console.log('[FRONTEND] 调用 uploadImage API for gallery image, filePath:', file.tempFilePath);
+          const uploadRes = await api.uploadImage(file.tempFilePath);
 
-            if (uploadRes.file && uploadRes.file.url) {
-              images.push(uploadRes.file.url);
-              this.setData({ uploadProgress: 100 });
-            } else {
-              console.error('[FRONTEND] 商品图集图片上传响应格式错误:', uploadRes);
-              util.showError('部分图片上传失败');
-            }
-          });
-          uploadPromises.push(uploadPromise);
+          console.log('[FRONTEND] 商品图集图片上传响应:', uploadRes);
+
+          if (uploadRes.file && uploadRes.file.url) {
+            images.push(uploadRes.file.url);
+            this.setData({ uploadProgress: 100 });
+          } else {
+            console.error('[FRONTEND] 商品图集图片上传响应格式错误:', uploadRes);
+            util.showError('部分图片上传失败');
+          }
         }
 
-        return Promise.all(uploadPromises).then(() => {
-          this.setData({
-            'formData.images': images
-          });
-          util.showSuccess('图片上传成功');
+        this.setData({
+          'formData.images': images
         });
+        util.showSuccess('图片上传成功');
       }
-    }).catch(error => {
+    } catch (error) {
       console.error('[FRONTEND] 商品图集图片上传失败:', error);
       util.showError('图片上传失败');
-    }).finally(() => {
+    } finally {
       this.setData({ uploading: false, uploadProgress: 0 });
-    });
+    }
   },
 
   // 推荐商品切换
@@ -347,15 +329,6 @@ Page({
   onNewChange(e) {
     this.setData({
       'formData.isNew': e.detail.value
-    });
-  },
-
-  // 开关切换处理
-  onSwitchChange(e) {
-    const { field } = e.currentTarget.dataset;
-    const value = e.detail.value;
-    this.setData({
-      [`formData.${field}`]: value
     });
   },
 
@@ -506,54 +479,57 @@ Page({
     }
 
     return true;
-  },
+  }
 
   // 提交表单
-  onSubmit() {
+  async onSubmit() {
     if (!this.validateForm()) return;
     if (this.data.submitting) return;
 
     this.setData({ submitting: true });
 
-    const formData = {
-      ...this.data.formData,
-      price: parseFloat(this.data.formData.price),
-      original_price: this.data.formData.originalPrice ? parseFloat(this.data.formData.originalPrice) : null,
-      stock: parseInt(this.data.formData.stock),
-      category_id: this.data.formData.categoryId || null,  // 修复categoryId设置为undefined的问题
-      main_image: this.data.formData.mainImage || this.data.formData.images[0] || null,
-      images: this.data.formData.images || [],
-      is_featured: this.data.formData.isFeatured || false,
-      is_new: this.data.formData.isNew || false,
-      skus: this.data.formData.skus || []  // 发送SKU数组
-    };
+    try {
+      const formData = {
+        ...this.data.formData,
+        price: parseFloat(this.data.formData.price),
+        original_price: this.data.formData.originalPrice ? parseFloat(this.data.formData.originalPrice) : null,
+        stock: parseInt(this.data.formData.stock),
+        category_id: this.data.formData.categoryId || null,  // 修复categoryId设置为undefined的问题
+        main_image: this.data.formData.mainImage || this.data.formData.images[0] || null,
+        images: this.data.formData.images || [],
+        is_featured: this.data.formData.isFeatured || false,
+        is_new: this.data.formData.isNew || false,
+        skus: this.data.formData.skus || []  // 发送SKU数组
+      };
 
-    console.log('[FRONTEND PRODUCT SUBMIT] 准备提交的formData:', formData);
-    console.log('[FRONTEND PRODUCT SUBMIT] images array:', formData.images);
-    console.log('[FRONTEND PRODUCT SUBMIT] main_image:', formData.main_image);
-    console.log('[FRONTEND PRODUCT SUBMIT] skus:', formData.skus);
+      console.log('[FRONTEND PRODUCT SUBMIT] 准备提交的formData:', formData);
+      console.log('[FRONTEND PRODUCT SUBMIT] images array:', formData.images);
+      console.log('[FRONTEND PRODUCT SUBMIT] main_image:', formData.main_image);
+      console.log('[FRONTEND PRODUCT SUBMIT] skus:', formData.skus);
 
-    let apiCall;
-    if (this.data.isEdit) {
-      apiCall = api.updateProduct(this.data.productId, formData);
-    } else {
-      apiCall = api.createProduct(formData);
-    }
+      let result;
 
-    apiCall.then(result => {
+      if (this.data.isEdit) {
+        result = await api.updateProduct(this.data.productId, formData);
+        util.showSuccess('商品更新成功');
+      } else {
+        result = await api.createProduct(formData);
+        util.showSuccess('商品创建成功');
+      }
+
       console.log('[FRONTEND PRODUCT SUBMIT] API响应:', result);
-      util.showSuccess(this.data.isEdit ? '商品更新成功' : '商品创建成功');
 
       // 返回商品管理页面
       setTimeout(() => {
         wx.navigateBack();
       }, 1500);
-    }).catch(error => {
+
+    } catch (error) {
       console.error('保存商品失败:', error);
       util.showError('保存商品失败');
-    }).finally(() => {
+    } finally {
       this.setData({ submitting: false });
-    });
+    }
   },
 
   // 返回

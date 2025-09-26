@@ -193,17 +193,7 @@ Page({
       return (response || []).slice(0, 8);
     } catch (error) {
       console.error('获取分类失败:', error);
-      // Fallback mock categories
-      return [
-        { id: 1, name: '手机数码', icon: '📱' },
-        { id: 2, name: '服装鞋帽', icon: '👕' },
-        { id: 3, name: '家用电器', icon: '🧴' },
-        { id: 4, name: '电脑办公', icon: '💻' },
-        { id: 5, name: '家居生活', icon: '🏠' },
-        { id: 6, name: '母婴用品', icon: '👶' },
-        { id: 7, name: '图书音像', icon: '📚' },
-        { id: 8, name: '美食饮品', icon: '🍔' }
-      ];
+      return [];
     }
   },
 
@@ -257,24 +247,7 @@ Page({
       return response || [];
     } catch (error) {
       console.error('获取轮播图失败:', error);
-      // Fallback to mock data
-      return [
-        {
-          id: 1,
-          image: 'https://via.placeholder.com/750x300/ff6b35/ffffff?text=轮播图1',
-          link: '/pages/product/list?type=hot'
-        },
-        {
-          id: 2,
-          image: 'https://via.placeholder.com/750x300/4ecdc4/ffffff?text=轮播图2',
-          link: '/pages/product/list?type=new'
-        },
-        {
-          id: 3,
-          image: 'https://via.placeholder.com/750x300/45b7d1/ffffff?text=轮播图3',
-          link: '/pages/product/list?type=discount'
-        }
-      ];
+      return [];
     }
   },
 

@@ -41,7 +41,7 @@
             bindchange="onCategoryChange"
           >
             <view class="picker-display">
-              {{categories[categoryIndex] ? categories[categoryIndex].name : '请选择分类'}}
+              {{categories && categories.length > 0 && categories[categoryIndex] ? categories[categoryIndex].name : '请选择分类'}}
             </view>
           </picker>
           <button
@@ -50,6 +50,9 @@
           >
             新建分类
           </button>
+        </view>
+        <view class="form-hint" wx:if="{{categories && categories.length === 0}}">
+          暂无分类，可以先创建分类或直接添加商品
         </view>
       </view>
 
@@ -317,7 +320,7 @@
             class="form-input"
             value="{{currentSku.name}}"
             placeholder="例如：红色、大号"
-            bindinput="onSkuInput"
+            bindinput="onSkuInputChange"
             data-field="name"
           />
         </view>
@@ -328,7 +331,7 @@
             type="number"
             value="{{currentSku.price}}"
             placeholder="0.00"
-            bindinput="onSkuInput"
+            bindinput="onSkuInputChange"
             data-field="price"
           />
         </view>
@@ -339,7 +342,7 @@
             type="number"
             value="{{currentSku.stock}}"
             placeholder="库存数量"
-            bindinput="onSkuInput"
+            bindinput="onSkuInputChange"
             data-field="stock"
           />
         </view>

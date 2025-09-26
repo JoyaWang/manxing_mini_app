@@ -625,8 +625,8 @@ exports.main = async (event, context) => {
             price: 7999,
             original_price: 8999,
             stock: 100,
-            main_image: 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-iphone15.jpg', // 假设云存储路径
-            images: ['cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-iphone15-1.jpg', 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-iphone15-2.jpg'],
+            main_image: 'https://via.placeholder.com/300x300/ff6b35/ffffff?text=iPhone+15', // 使用占位图
+                        images: ['https://via.placeholder.com/300x300/ff6b35/ffffff?text=iPhone+15+1', 'https://via.placeholder.com/300x300/ff6b35/ffffff?text=iPhone+15+2'],
             category_id: 'temp_cat_id', // 将被替换
             status: 'published',
             sales_count: 0,
@@ -645,8 +645,8 @@ exports.main = async (event, context) => {
             price: 1299,
             original_price: 1499,
             stock: 50,
-            main_image: 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-airpurifier.jpg',
-            images: ['cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-airpurifier-1.jpg'],
+            main_image: 'https://via.placeholder.com/300x300/4ecdc4/ffffff?text=Air+Purifier', // 使用占位图
+                        images: ['https://via.placeholder.com/300x300/4ecdc4/ffffff?text=Air+Purifier+1'],
             category_id: 'temp_cat_id',
             status: 'published',
             sales_count: 0,
@@ -676,8 +676,8 @@ exports.main = async (event, context) => {
 
         // 初始化轮播图
         const banners = [
-          { image: 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-banner1.jpg', link: '/pages/products/list', sort_order: 1, updated_at: new Date() },
-          { image: 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-banner2.jpg', link: '/pages/products/list', sort_order: 2, updated_at: new Date() }
+          { image: 'https://via.placeholder.com/750x300/ff6b35/ffffff?text=Banner+1', link: '/pages/product/list?type=hot', sort_order: 1, updated_at: new Date() },
+                    { image: 'https://via.placeholder.com/750x300/4ecdc4/ffffff?text=Banner+2', link: '/pages/product/list?type=new', sort_order: 2, updated_at: new Date() }
         ];
         await db.collection('banners').remove();
         for (const banner of banners) {
@@ -686,7 +686,7 @@ exports.main = async (event, context) => {
 
         // 初始化广告
         const ads = [
-          { image: 'cloud://manxing-mall-8gvmc6103b5c51eb.6d6d-ad1.jpg', title: '限时特惠', link: '/pages/products/list', sort_order: 1, updated_at: new Date() }
+          { image: 'https://via.placeholder.com/300x150/45b7d1/ffffff?text=限时特惠', title: '限时特惠', link: '/pages/product/list?type=discount', sort_order: 1, updated_at: new Date() }
         ];
         await db.collection('ads').remove();
         for (const ad of ads) {

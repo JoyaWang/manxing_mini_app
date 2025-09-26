@@ -11,7 +11,7 @@
 
   <!-- 板块列表 -->
   <view class="section-list">
-    <block wx:for="{{sections}}" wx:for-item="section" wx:for-index="key" wx:key="key">
+    <block wx:for="{{sectionList}}" wx:for-item="section" wx:key="key">
       <view class="section-item">
         <view class="section-info">
           <text class="section-name">{{section.name}}</text>
@@ -19,11 +19,11 @@
             {{section.enabled ? '已启用' : '已禁用'}}
           </text>
         </view>
-        
-        <switch 
-          checked="{{section.enabled}}" 
-          bindchange="onToggleSection" 
-          data-section="{{key}}"
+
+        <switch
+          checked="{{section.enabled}}"
+          bindchange="onToggleSection"
+          data-section="{{section.key}}"
           class="section-switch"
         />
       </view>

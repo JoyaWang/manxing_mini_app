@@ -30,6 +30,11 @@
 
       <text class="product-name">{{product.name}}</text>
       
+      <!-- 商品简介 -->
+      <view class="product-description" wx:if="{{product.description}}">
+        <text class="description-text">{{product.description}}</text>
+      </view>
+      
       <view class="meta-info">
         <text>销量: {{product.sales || 0}}</text>
         <text>库存: {{selectedSku ? selectedSku.stock : product.stock}}</text>

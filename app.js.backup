@@ -1,10 +1,12 @@
-// app.js - 仅支持腾讯云云函数
+// app.js
 const AuthManager = require('./utils/auth');
 
 App({
   onLaunch() {
-    // 初始化云开发环境
-    this.initCloudEnvironment();
+    // 异步初始化云开发环境（避免阻塞启动）
+    setTimeout(() => {
+      this.initCloudEnvironment();
+    }, 100);
     
     // 检查登录状态
     this.checkLoginStatus();
@@ -15,15 +17,45 @@ App({
 
   globalData: {
     userInfo: null,
-    // 移除 backendType 和 config 配置，固定使用腾讯云
+    backendType: 'tencent', // 'tencent' 或 'supabase'
+    config: {
+      tencent: {
+        //env: 'cloud1-3g4i92y9839a6fe3'//free
+        env: 'manxing-mall-8gvmc6103b5c51eb'//云开发环境个人版
+      },
+      supabase: {
+        url: 'https://lcyfjbaqihrnlvwmlzmm.supabase.co',
+        key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxjeWZqYmFxaWhybmx2d21sem1tIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg0MDcwMzMsImV4cCI6MjA3Mzk4MzAzM30.veoMaIBQJjOnw4s8RlRz2CS_83kQWrsE-sF7idS5j50'
+      },
+      localBackend: {
+        baseURL: 'http://localhost:3002'
+      }
+    }
   },
 
   // 初始化云环境
   initCloudEnvironment() {
-    wx.cloud.init({
-      env: 'manxing-mall-8gvmc6103b5c51eb', // 云开发环境个人版
-      traceUser: true
-    });
+    const { backendType, config } = this.globalData;
+    
+    if (backendType === 'tencent') {
+      wx.cloud.init({
+        env: config.tencent.env,
+        traceUser: true
+      });
+    }
+    // Supabase 初始化在具体API中处理
+  },
+
+  // 切换后端类型
+  switchBackendType(type) {
+    if (['tencent', 'supabase'].includes(type)) {
+      this.globalData.backendType = type;
+      this.initCloudEnvironment();
+      wx.showToast({
+        title: `已切换到${type === 'tencent' ? '腾讯云' : 'Supabase'}`,
+        icon: 'success'
+      });
+    }
   },
 
   // 检查登录状态

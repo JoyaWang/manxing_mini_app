@@ -16,6 +16,7 @@ Page({
       flashSale: { name: '限时秒杀', enabled: false, type: 'special' },
       brandZone: { name: '品牌专区', enabled: false, type: 'special' }
     },
+    sectionList: [], // 用于显示的板块列表数组
     productDisplayConfig: {},
     selectedSection: null,
     sectionProducts: {}
@@ -25,6 +26,7 @@ Page({
     this.checkAdminAccess();
     this.loadSectionConfig();
     this.loadProductDisplayConfig();
+    this.updateSectionList(); // 初始化板块列表
   },
 
   // 检查管理员权限
@@ -45,10 +47,16 @@ Page({
     this.setData({ loading: true });
 
     try {
-      const config = await api.getHomeSectionsConfig();
+      const response = await api.getHomeSectionsConfig();
+      console.log('[SECTION CONFIG] API Response:', response);
 
-      // 将布尔值转换为对象格式
-      const formattedConfig = {};
+      // 处理不同的响应格式
+      let config = response;
+      if (response && response.config) {
+        config = response.config; // 如果响应包含config字段
+      }
+
+      // 默认配置
       const defaultConfig = {
         banners: { name: '轮播图', enabled: true, type: 'banner' },
         categories: { name: '分类导航', enabled: true, type: 'category' },
@@ -60,40 +68,77 @@ Page({
         brandZone: { name: '品牌专区', enabled: false, type: 'special' }
       };
 
+      // 如果API返回空配置，使用默认配置
+      if (!config || Object.keys(config).length === 0) {
+        console.log('[SECTION CONFIG] Using default config');
+        this.setData({ sections: defaultConfig });
+        return;
+      }
+
+      // 将布尔值转换为对象格式
+      const formattedConfig = {};
       for (const [key, value] of Object.entries(config)) {
         if (typeof value === 'boolean') {
           formattedConfig[key] = { ...defaultConfig[key], enabled: value };
+        } else if (typeof value === 'object' && value !== null) {
+          // 如果已经是对象格式，直接使用
+          formattedConfig[key] = { ...defaultConfig[key], ...value };
         } else {
-          formattedConfig[key] = value;
+          // 其他情况使用默认配置
+          formattedConfig[key] = defaultConfig[key] || { name: key, enabled: false, type: 'unknown' };
         }
       }
 
+      // 确保所有默认板块都存在
+      Object.keys(defaultConfig).forEach(key => {
+        if (!formattedConfig[key]) {
+          formattedConfig[key] = defaultConfig[key];
+        }
+      });
+
+      console.log('[SECTION CONFIG] Final sections:', formattedConfig);
       this.setData({ sections: formattedConfig });
+      this.updateSectionList();
     } catch (error) {
       console.error('加载首页配置失败:', error);
       util.showError('加载配置失败');
+      // 出错时使用默认配置
+      const defaultConfig = {
+        banners: { name: '轮播图', enabled: true, type: 'banner' },
+        categories: { name: '分类导航', enabled: true, type: 'category' },
+        featuredProducts: { name: '推荐商品', enabled: true, type: 'product', limit: 8 },
+        hotProducts: { name: '热销商品', enabled: true, type: 'product', limit: 8 },
+        newProducts: { name: '新品上市', enabled: true, type: 'product', limit: 8 },
+        recommendedProducts: { name: '推荐专区', enabled: true, type: 'product', limit: 6 },
+        flashSale: { name: '限时秒杀', enabled: false, type: 'special' },
+        brandZone: { name: '品牌专区', enabled: false, type: 'special' }
+      };
+      this.setData({ sections: defaultConfig });
     } finally {
       this.setData({ loading: false });
     }
   },
 
-  // 加载商品展示配置
-  async loadProductDisplayConfig() {
-    try {
-      const config = await api.getProductDisplayConfig();
-      this.setData({ productDisplayConfig: config });
-    } catch (error) {
-      console.error('加载商品展示配置失败:', error);
-    }
+  // 更新板块列表（将对象转换为数组）
+  updateSectionList() {
+    const sections = this.data.sections;
+    const sectionList = Object.keys(sections).map(key => ({
+      key: key,
+      name: sections[key].name,
+      enabled: sections[key].enabled,
+      type: sections[key].type
+    }));
+    this.setData({ sectionList: sectionList });
   },
 
   // 切换板块状态
   async onToggleSection(e) {
-    const section = e.currentTarget.dataset.section;
+    const sectionKey = e.currentTarget.dataset.section;
     const newSections = { ...this.data.sections };
-    newSections[section].enabled = !newSections[section].enabled;
+    newSections[sectionKey].enabled = !newSections[sectionKey].enabled;
 
     this.setData({ sections: newSections });
+    this.updateSectionList();
     await this.saveSectionConfig();
   },
 

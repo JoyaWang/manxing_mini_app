@@ -30,14 +30,26 @@ Page({
 
   async loadProductDetail() {
     this.setData({ loading: true });
+    console.log('[PRODUCT DETAIL] 开始加载商品详情，商品ID:', this.productId);
     
     try {
       const product = await api.getProductDetail(this.productId);
+      console.log('[PRODUCT DETAIL] API响应数据:', JSON.stringify(product, null, 2));
+      console.log('[PRODUCT DETAIL] 图片数据 - image:', product.image);
+      console.log('[PRODUCT DETAIL] 图片数据 - images:', product.images);
+      console.log('[PRODUCT DETAIL] 描述数据 - description:', product.description);
+      console.log('[PRODUCT DETAIL] 详情数据 - detail:', product.detail);
+      
       this.setData({
         product,
         selectedSku: product.skus && product.skus.length > 0 ? product.skus[0] : null,
         loading: false
       });
+      
+      // 检查设置后的数据
+      setTimeout(() => {
+        console.log('[PRODUCT DETAIL] 设置后的product数据:', JSON.stringify(this.data.product, null, 2));
+      }, 100);
     } catch (error) {
       console.error('加载商品详情失败:', error);
       util.showError('加载商品详情失败');
@@ -101,22 +113,30 @@ Page({
 
   // 添加到购物车
   async onAddToCart() {
-    // Check login status
-    const user = wx.getStorageSync('user');
-    if (!user || !user.id) {
+    // Check login status - use consistent storage key
+    console.log('[AUTH DEBUG] Checking login status in onAddToCart');
+    const userInfo = wx.getStorageSync('userInfo');
+    console.log('[AUTH DEBUG] userInfo from storage:', userInfo);
+    const app = getApp();
+    console.log('[AUTH DEBUG] app.globalData.userInfo:', app.globalData.userInfo);
+    
+    if (!userInfo || !userInfo.id) {
+      console.log('[AUTH DEBUG] User not logged in, showing login prompt');
       wx.showModal({
         title: '提示',
         content: '请先登录',
         success: (res) => {
           if (res.confirm) {
             wx.navigateTo({
-              url: '/pages/user/login'
+              url: '/pages/login/index'
             });
           }
         }
       });
       return;
     }
+    
+    console.log('[AUTH DEBUG] User is logged in, proceeding with add to cart');
   
     if (!this.data.selectedSku) {
       util.showError('请选择商品规格');
@@ -140,22 +160,30 @@ Page({
 
   // 立即购买
   async onBuyNow() {
-    // Check login status
-    const user = wx.getStorageSync('user');
-    if (!user || !user.id) {
+    // Check login status - use consistent storage key
+    console.log('[AUTH DEBUG] Checking login status in onBuyNow');
+    const userInfo = wx.getStorageSync('userInfo');
+    console.log('[AUTH DEBUG] userInfo from storage:', userInfo);
+    const app = getApp();
+    console.log('[AUTH DEBUG] app.globalData.userInfo:', app.globalData.userInfo);
+    
+    if (!userInfo || !userInfo.id) {
+      console.log('[AUTH DEBUG] User not logged in, showing login prompt');
       wx.showModal({
         title: '提示',
         content: '请先登录',
         success: (res) => {
           if (res.confirm) {
             wx.navigateTo({
-              url: '/pages/user/login'
+              url: '/pages/login/index'
             });
           }
         }
       });
       return;
     }
+    
+    console.log('[AUTH DEBUG] User is logged in, proceeding with buy now');
   
     if (!this.data.selectedSku) {
       util.showError('请选择商品规格');

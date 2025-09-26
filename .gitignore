@@ -1,6 +1,7 @@
 # WeChat Mini Program
 # https://developers.weixin.qq.com/miniprogram/dev/devtools/projectconfig.html
 
+# Project configuration files
 project.private.config.json
 project.swan.json
 project.tt.json
@@ -8,14 +9,19 @@ project.wxapkg.json
 project.config.json
 
 # Logs
-logs
+logs/
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+dev-debug.log
 
 # Runtime data
-appdata
+appdata/
 
 # Build outputs
-dist
+dist/
+miniprogram_npm/
 
 # Dependencies
 node_modules/
@@ -45,8 +51,33 @@ Thumbs.db
 .project
 .buildpath
 .settings/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
 # Cloud functions
 cloud_functions/*/functions/*/.env
 cloud_functions/*/functions/*/node_modules/
 
+# Package lock files (keep only one)
+package-lock.json
+yarn.lock
+
+# Temporary files
+*.tmp
+*.temp
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# CodeBuddy configuration
+.codebuddy/
+
+# TaskMaster configuration
+.taskmaster/
+
+# Cursor configuration
+.cursor/

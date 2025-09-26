@@ -477,3 +477,10 @@
 .status-label {
   color: #4a5568; /* 中灰色，用于状态标签 */
 }
+
+.form-hint {
+  color: #718096; /* 浅灰色，用于提示文字 */
+  font-size: 12px;
+  margin-top: 4px;
+  font-style: italic;
+}

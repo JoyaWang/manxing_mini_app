@@ -1,135 +1,117 @@
 <!--pages/admin/index.wxml-->
 <view class="container">
-  <!-- 返回按钮 -->
-  <view class="back-button" bindtap="onBackToUserCenter">
-    <text class="back-icon">←</text>
-    <text class="back-text">返回</text>
-  </view>
-  
-  <!-- 管理后台头部 -->
-  <view class="admin-header">
-    <view class="header-title">
-      <text class="title">管理后台</text>
-      <text class="subtitle">商城管理系统</text>
-    </view>
-      <view class="header-actions">
-        <button class="btn-switch-consumer" bindtap="onSwitchToConsumer">
-          <text class="switch-icon">🛒</text>
-          <text class="switch-text">消费者页面</text>
-        </button>
-        <view class="header-user">
+  <!-- 紧凑头部与数据概览 -->
+  <view class="compact-header">
+    <view class="header-main">
+      <view class="header-info">
+        <view class="admin-title">
+          <text class="title">管理后台</text>
+          <text class="subtitle">商城管理系统</text>
+        </view>
+        <view class="user-info">
           <image class="user-avatar" src="{{userInfo.avatarUrl}}" />
           <text class="user-name">{{userInfo.nickName}}</text>
         </view>
-    </view>
-  </view>
+      </view>
 
-  <!-- 数据概览 - 紧凑3x2网格 -->
-  <view class="stats-section">
-    <view class="stats-grid">
-      <view class="stat-card">
-        <view class="stat-icon">📦</view>
-        <text class="stat-number">{{stats.products}}</text>
-        <text class="stat-label">商品总数</text>
-      </view>
-      <view class="stat-card">
-        <view class="stat-icon">📋</view>
-        <text class="stat-number">{{stats.orders}}</text>
-        <text class="stat-label">订单总数</text>
-      </view>
-      <view class="stat-card">
-        <view class="stat-icon">👥</view>
-        <text class="stat-number">{{stats.users}}</text>
-        <text class="stat-label">用户总数</text>
-      </view>
-      <view class="stat-card">
-        <view class="stat-icon">💰</view>
-        <text class="stat-number">¥{{stats.revenue}}</text>
-        <text class="stat-label">总销售额</text>
-      </view>
-      <view class="stat-card">
-        <view class="stat-icon">📊</view>
-        <text class="stat-number">{{stats.todayOrders || 0}}</text>
-        <text class="stat-label">今日订单</text>
-      </view>
-      <view class="stat-card">
-        <view class="stat-icon">⚠️</view>
-        <text class="stat-number">{{stats.lowStock || 0}}</text>
-        <text class="stat-label">库存预警</text>
+      <!-- 紧凑数据概览 - 水平排列 -->
+      <view class="compact-stats">
+        <view class="stat-item" bindtap="onNavigateToProductManage">
+          <text class="stat-number">{{stats.products}}</text>
+          <text class="stat-label">商品</text>
+        </view>
+        <view class="stat-item" bindtap="onNavigateToOrderManage">
+          <text class="stat-number">{{stats.orders}}</text>
+          <text class="stat-label">订单</text>
+        </view>
+        <view class="stat-item" bindtap="onNavigateToUserManage">
+          <text class="stat-number">{{stats.users}}</text>
+          <text class="stat-label">用户</text>
+        </view>
+        <view class="stat-item revenue" bindtap="onViewTodayOrders">
+          <text class="stat-number">¥{{stats.revenue}}</text>
+          <text class="stat-label">销售额</text>
+        </view>
       </view>
     </view>
   </view>
 
-  <!-- 功能卡片网格 - 更紧凑的3列布局 -->
-  <view class="compact-grid">
-    <view class="compact-row">
-      <view class="compact-card" bindtap="onNavigateToProductManage">
-        <view class="compact-icon">📦</view>
-        <text class="compact-title">商品管理</text>
-        <text class="compact-stats">{{stats.products}} 商品</text>
+  <!-- 功能卡片网格 - 紧凑3x2布局 -->
+  <view class="function-grid">
+    <view class="function-row">
+      <view class="function-card primary" bindtap="onNavigateToProductManage">
+        <view class="card-icon">📦</view>
+        <view class="card-content">
+          <text class="card-title">商品管理</text>
+          <text class="card-desc">{{stats.products}} 个商品</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
 
-      <view class="compact-card" bindtap="onNavigateToOrderManage">
-        <view class="compact-icon">📋</view>
-        <text class="compact-title">订单管理</text>
-        <text class="compact-stats">{{stats.orders}} 订单</text>
+      <view class="function-card" bindtap="onNavigateToOrderManage">
+        <view class="card-icon">📋</view>
+        <view class="card-content">
+          <text class="card-title">订单管理</text>
+          <text class="card-desc">{{stats.orders}} 个订单</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
 
-      <view class="compact-card" bindtap="onNavigateToUserManage">
-        <view class="compact-icon">👥</view>
-        <text class="compact-title">用户管理</text>
-        <text class="compact-stats">{{stats.users}} 用户</text>
+      <view class="function-card" bindtap="onNavigateToUserManage">
+        <view class="card-icon">👥</view>
+        <view class="card-content">
+          <text class="card-title">用户管理</text>
+          <text class="card-desc">{{stats.users}} 位用户</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
     </view>
 
-    <view class="compact-row">
-      <view class="compact-card" bindtap="onNavigateToSectionManage">
-        <view class="compact-icon">🏠</view>
-        <text class="compact-title">首页配置</text>
-        <text class="compact-stats">6 板块</text>
+    <view class="function-row">
+      <view class="function-card" bindtap="onNavigateToSectionManage">
+        <view class="card-icon">🏠</view>
+        <view class="card-content">
+          <text class="card-title">首页配置</text>
+          <text class="card-desc">6 个板块</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
 
-      <view class="compact-card primary" bindtap="onAddNewProduct">
-        <view class="compact-icon">➕</view>
-        <text class="compact-title">添加商品</text>
-        <text class="compact-stats">快速创建</text>
+      <view class="function-card accent" bindtap="onAddNewProduct">
+        <view class="card-icon">➕</view>
+        <view class="card-content">
+          <text class="card-title">添加商品</text>
+          <text class="card-desc">快速创建</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
 
-      <view class="compact-card" bindtap="onViewTodayOrders">
-        <view class="compact-icon">📅</view>
-        <text class="compact-title">今日订单</text>
-        <text class="compact-stats">实时查看</text>
+      <view class="function-card" bindtap="onCheckInventory">
+        <view class="card-icon">📊</view>
+        <view class="card-content">
+          <text class="card-title">库存检查</text>
+          <text class="card-desc">库存预警</text>
+        </view>
+        <view class="card-arrow">→</view>
       </view>
     </view>
   </view>
 
-  <!-- 快捷操作工具栏 - 紧凑一行 -->
-  <view class="quick-toolbar">
-    <view class="toolbar-title">快捷操作</view>
-    <view class="toolbar-buttons">
-      <button class="tool-btn" bindtap="onCheckInventory">
-        <text class="tool-icon">📊</text>
-        <text class="tool-text">库存检查</text>
+  <!-- 快捷操作栏 - 紧凑底部 -->
+  <view class="quick-actions">
+    <view class="action-buttons">
+      <button class="action-btn switch" bindtap="onSwitchToConsumer">
+        <text class="action-icon">🛒</text>
+        <text class="action-text">消费者页面</text>
       </button>
-      <button class="tool-btn backend" bindtap="onSwitchBackend">
-        <text class="tool-icon">🔄</text>
-        <text class="tool-text">切换后端</text>
-        <text class="backend-badge">{{backendType === 'tencent' ? '腾讯云' : 'Supabase'}}</text>
+      <button class="action-btn backend" bindtap="onSwitchBackend">
+        <text class="action-icon">🔄</text>
+        <text class="action-text">{{backendType === 'tencent' ? '腾讯云' : 'Supabase'}}</text>
+      </button>
+      <button class="action-btn back" bindtap="onBackToUserCenter">
+        <text class="action-icon">←</text>
+        <text class="action-text">返回</text>
       </button>
     </view>
-  </view>
-
-  <!-- 快速切换到消费者页面 -->
-  <view class="consumer-switch-section">
-    <button class="consumer-switch-btn" bindtap="onSwitchToConsumer">
-      <text class="switch-icon">🛒</text>
-      <text class="switch-text">切换到消费者页面</text>
-      <text class="switch-subtext">查看商城前台</text>
-    </button>
-  </view>
-
-  <!-- 底部导航 -->
-  <view class="bottom-nav">
-    <button class="btn-back" bindtap="onBackToUserCenter">返回用户中心</button>
   </view>
 </view>

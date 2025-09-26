@@ -169,111 +169,135 @@ class ApiClient {
 
     console.log('[API GET PRODUCTS] Raw response:', response);
 
-    // Default placeholder image - use online placeholder to avoid HTTP issues in WeChat
+    // Default placeholder image
     const defaultImage = 'https://via.placeholder.com/300x300/cccccc/666666?text=No+Image';
 
-    // For cloud deployment, handle fileIDs by getting temp URLs
-    if (this.backendType === 'tencent' && response.products) {
-      // Batch get temp URLs for all images
-      const allFileIDs = [];
-      response.products.forEach(product => {
-        if (product.main_image && typeof product.main_image === 'string' && !product.main_image.startsWith('http')) {
-          allFileIDs.push(product.main_image);
-        }
-        if (product.images && Array.isArray(product.images)) {
-          product.images.forEach(img => {
-            if (img && typeof img === 'string' && !img.startsWith('http')) {
-              allFileIDs.push(img);
-            }
-          });
-        }
-      });
-
-      if (allFileIDs.length > 0) {
-        try {
-          const urlRes = await new Promise((resolve, reject) => {
-            wx.cloud.getTempFileURL({
-              fileList: allFileIDs,
-              success: resolve,
-              fail: reject
+    if (response && response.products) {
+      if (this.backendType === 'tencent') {
+        // Cloud deployment - handle fileIDs by getting temp URLs
+        const allFileIDs = [];
+        response.products.forEach(product => {
+          if (product.main_image && typeof product.main_image === 'string' && !product.main_image.startsWith('http')) {
+            allFileIDs.push(product.main_image);
+          }
+          if (product.images && Array.isArray(product.images)) {
+            product.images.forEach(img => {
+              if (img && typeof img === 'string' && !img.startsWith('http')) {
+                allFileIDs.push(img);
+              }
             });
-          });
+          }
+        });
 
-          const urlMap = {};
-          urlRes.fileList.forEach(item => {
-            urlMap[item.fileID] = item.tempFileURL;
-          });
+        if (allFileIDs.length > 0) {
+          try {
+            const urlRes = await new Promise((resolve, reject) => {
+              wx.cloud.getTempFileURL({
+                fileList: allFileIDs,
+                success: resolve,
+                fail: reject
+              });
+            });
 
-          // Map responses with URLs
-          response.products = response.products.map(product => {
-            console.log('[API GET PRODUCTS] Processing product:', product.id, 'main_image:', product.main_image, 'images:', product.images);
+            const urlMap = {};
+            urlRes.fileList.forEach(item => {
+              urlMap[item.fileID] = item.tempFileURL;
+            });
 
-            // Handle main_image
-            let mainImagePath = product.main_image;
-            if (mainImagePath === undefined || mainImagePath === null || mainImagePath === 'undefined' || mainImagePath === 'null') {
-              mainImagePath = null;
-            } else {
-              mainImagePath = mainImagePath.toString().trim();
-              if (mainImagePath === '' || !mainImagePath.startsWith('http')) {
+            // Map responses with URLs
+            response.products = response.products.map(product => {
+              console.log('[API GET PRODUCTS] Processing product:', product.id, 'main_image:', product.main_image, 'images:', product.images);
+
+              // Handle main_image
+              let mainImagePath = product.main_image;
+              if (mainImagePath && typeof mainImagePath === 'string' && !mainImagePath.startsWith('http')) {
                 mainImagePath = urlMap[mainImagePath] || null;
               }
-            }
 
-            // Handle images array
-            let parsedImages = [];
-            if (product.images) {
-              if (typeof product.images === 'string') {
-                try {
-                  parsedImages = JSON.parse(product.images);
-                } catch (e) {
-                  parsedImages = [];
+              // Handle images array
+              let parsedImages = [];
+              if (product.images) {
+                if (typeof product.images === 'string') {
+                  try {
+                    parsedImages = JSON.parse(product.images);
+                  } catch (e) {
+                    parsedImages = [];
+                  }
+                } else if (Array.isArray(product.images)) {
+                  parsedImages = product.images;
                 }
-              } else if (Array.isArray(product.images)) {
-                parsedImages = product.images;
               }
-            }
 
-            parsedImages = parsedImages.map(img => {
-              const imgStr = (img || '').toString().trim();
-              if (imgStr === '' || imgStr === 'undefined' || imgStr === 'null') return null;
-              return urlMap[imgStr] || imgStr; // Use temp URL if fileID
-            }).filter(Boolean);
+              parsedImages = parsedImages.map(img => {
+                const imgStr = (img || '').toString().trim();
+                if (imgStr && !imgStr.startsWith('http')) {
+                  return urlMap[imgStr] || imgStr;
+                }
+                return imgStr;
+              }).filter(Boolean);
 
-            // Fallback to first image if no main
-            if (!mainImagePath && parsedImages.length > 0) {
-              mainImagePath = parsedImages[0];
-            }
+              // Fallback to first image if no main
+              if (!mainImagePath && parsedImages.length > 0) {
+                mainImagePath = parsedImages[0];
+              }
 
-            const imageUrl = mainImagePath || defaultImage;
-            console.log('[API GET PRODUCTS] Final image URL for product', product.id, ':', imageUrl);
+              const imageUrl = mainImagePath || defaultImage;
+              console.log('[API GET PRODUCTS] Final image URL for product', product.id, ':', imageUrl);
 
-            return {
+              return {
+                ...product,
+                id: product._id || product.id,
+                originalPrice: product.original_price || null,
+                isFeatured: Boolean(product.is_featured),
+                isNew: Boolean(product.is_new),
+                categoryId: product.category_id || '',
+                image: imageUrl,
+                images: parsedImages,
+                sales: product.sales_count || 0
+              };
+            });
+          } catch (urlErr) {
+            console.error('[API GET PRODUCTS] Failed to get temp URLs:', urlErr);
+            // Fallback without cloud URLs
+            response.products = response.products.map(product => ({
               ...product,
+              id: product._id || product.id,
               originalPrice: product.original_price || null,
               isFeatured: Boolean(product.is_featured),
               isNew: Boolean(product.is_new),
               categoryId: product.category_id || '',
-              image: imageUrl,
-              images: parsedImages,
+              image: product.main_image || product.image || defaultImage,
+              images: Array.isArray(product.images) ? product.images : [],
               sales: product.sales_count || 0
-            };
-          });
-        } catch (urlErr) {
-          console.error('[API GET PRODUCTS] Failed to get temp URLs:', urlErr);
-          // Fallback to original logic without URLs
-          // ... (existing mapping logic without cloud specifics)
+            }));
+          }
+        } else {
+          // No fileIDs, use existing logic
+          response.products = response.products.map(product => ({
+            ...product,
+            id: product._id || product.id,
+            originalPrice: product.original_price || null,
+            isFeatured: Boolean(product.is_featured),
+            isNew: Boolean(product.is_new),
+            categoryId: product.category_id || '',
+            image: product.main_image || product.image || defaultImage,
+            images: Array.isArray(product.images) ? product.images : [],
+            sales: product.sales_count || 0
+          }));
         }
       } else {
-        // Non-cloud or no fileIDs, use existing logic
-        // ... (existing mapping)
-      }
-    } else {
-      // Existing local/Supabase logic
-      const baseURL = this.config?.localBackend?.baseURL || 'http://localhost:3002';
-      if (response.products) {
-        response.products = response.products.map(product => {
-          // ... (existing local mapping logic)
-        });
+        // Non-cloud backend (Supabase or local)
+        response.products = response.products.map(product => ({
+          ...product,
+          id: product._id || product.id,
+          originalPrice: product.original_price || null,
+          isFeatured: Boolean(product.is_featured),
+          isNew: Boolean(product.is_new),
+          categoryId: product.category_id || '',
+          image: product.main_image || product.image || defaultImage,
+          images: Array.isArray(product.images) ? product.images : [],
+          sales: product.sales_count || 0
+        }));
       }
     }
 
@@ -285,8 +309,13 @@ class ApiClient {
     const response = await this.request(`/products/${id}`);
     console.log('[API GET PRODUCT DETAIL] Raw response:', response);
 
-    if (response && response.success && response.product) {
-      const product = response.product;
+    if (response) {
+      // Handle different response formats
+      let product = response.product || response;
+
+      if (!product) {
+        throw new Error('商品不存在');
+      }
 
       // Standardize ID
       product.id = product._id || product.id;
@@ -390,7 +419,7 @@ class ApiClient {
       }
     } else {
       console.error('[API GET PRODUCT DETAIL] Invalid response:', response);
-      throw new Error(response?.error || '商品不存在');
+      throw new Error('商品不存在');
     }
   }
 
@@ -459,13 +488,21 @@ class ApiClient {
 
   // 购物车相关API
   async getCart() {
-    return this.request('/cart');
+    const userInfo = wx.getStorageSync('userInfo');
+    const userId = userInfo ? userInfo.id : null;
+    return this.request('/cart', {
+      method: 'GET',
+      data: { userId }
+    });
   }
 
   async addToCart(productId, quantity = 1, skuId = null) {
+    const userInfo = wx.getStorageSync('userInfo');
+    const userId = userInfo ? userInfo.id : null;
+    console.log('[API ADD TO CART] User ID:', userId, 'Product ID:', productId, 'Quantity:', quantity, 'SKU ID:', skuId);
     return this.request('/cart/items', {
       method: 'POST',
-      data: { productId, quantity, skuId }
+      data: { productId, quantity, skuId, userId }
     });
   }
 
