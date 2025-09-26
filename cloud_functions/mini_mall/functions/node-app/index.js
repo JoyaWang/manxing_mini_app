@@ -493,12 +493,12 @@ exports.main = async (event, context) => {
     if (path === '/cart' && method === 'GET') {
       try {
         await ensureCollection('carts');
-        const { user_id } = query || {};
-        if (!user_id) {
+        const { userId } = body || query || {};
+        if (!userId) {
           return { success: false, error: '用户ID不能为空' };
         }
-        const result = await db.collection('carts').where({ user_id }).orderBy('created_at', 'desc').get();
-        return { success: true, cart: result.data };
+        const result = await db.collection('carts').where({ user_id: userId }).orderBy('created_at', 'desc').get();
+        return { success: true, items: result.data };
       } catch (error) {
         console.error('获取购物车错误:', error);
         return { success: false, error: '获取购物车失败' };
@@ -547,6 +547,46 @@ exports.main = async (event, context) => {
       } catch (error) {
         console.error('更新购物车错误:', error);
         return { success: false, error: '更新购物车失败' };
+      }
+    }
+
+    // 添加到购物车 (POST /cart/items)
+    if (path === '/cart/items' && method === 'POST') {
+      try {
+        await ensureCollection('carts');
+        const { userId, productId, quantity = 1, skuId } = body || {};
+        if (!userId || !productId) {
+          return { success: false, error: '用户ID和产品ID不能为空' };
+        }
+        // 检查是否已存在 (匹配 userId, productId, skuId)
+        const whereClause = { user_id: userId, product_id: productId };
+        if (skuId) whereClause.sku_id = skuId;
+        const existing = await db.collection('carts').where(whereClause).get();
+        if (existing.data.length > 0) {
+          const existingItem = existing.data[0];
+          await db.collection('carts').doc(existingItem._id).update({
+            data: {
+              quantity: db.command.inc(quantity),
+              updated_at: new Date()
+            }
+          });
+        } else {
+          await db.collection('carts').add({
+            data: {
+              user_id: userId,
+              product_id: productId,
+              quantity,
+              sku_id: skuId,
+              selected: true,
+              created_at: new Date(),
+              updated_at: new Date()
+            }
+          });
+        }
+        return { success: true, message: '添加购物车成功' };
+      } catch (error) {
+        console.error('添加购物车错误:', error);
+        return { success: false, error: '添加购物车失败' };
       }
     }
 

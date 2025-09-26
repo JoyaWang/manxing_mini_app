@@ -107,9 +107,11 @@
         <view class="main-image-section">
           <view class="form-label">主图</view>
           <view class="image-uploader" bindtap="onUploadMainImage">
-            <view class="upload-placeholder">
-              {{formData.mainImage ? '' : '点击上传主图'}}
-              <image wx:if="{{formData.mainImage}}" src="{{formData.mainImage}}" class="preview-image"></image>
+            <view wx:if="{{!formData.mainImage}}" class="upload-placeholder">
+              <text class="upload-text">点击上传主图</text>
+            </view>
+            <view wx:if="{{formData.mainImage}}" class="preview-container">
+              <image src="{{formData.mainImage}}" class="preview-image" mode="aspectFill"></image>
             </view>
           </view>
         </view>
